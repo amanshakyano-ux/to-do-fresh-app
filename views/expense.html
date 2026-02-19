@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO Do </title>
+</head>
+<body style="margin: 50px;  ">
+     <form onsubmit=handleExpense(event)>
+        <label for="amount">Spent Amount:</label>
+        <input type="number" name="amount" placeholder="spent amt"  id="amount" required>
+        <label for="desc">Description</label>
+        <input type="text" name="description" placeholder="explain here"  id= "desc" required> 
+<label for="category">Category</label>
+        <select name="category" id="category">
+
+            <option value="fuel">fuel</option>
+            <option value="travel">travel</option>
+            <option value="food">food</option>
+            <option value="device">device</option>
+            <option value="decoration">decoration</option>
+            <option value="land">land</option>
+        </select>
+        
+        <button type="submit">ADD</button>
+   </form>
+ <p id="premium-user"></p>
+
+  <h2 id="expense-heading"> Expenses</h2>
+   <div id="expense-list"></div>
+   <h2 id="leader-heading"></h3>
+   <ul id="leaderboard"></ul>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+<script src="../public/expense.js"></script>
+</body>
+</html>
