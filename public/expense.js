@@ -9,14 +9,14 @@ async function handleExpense(e){
     const expense_item= {
         amount:e.target.amount.value,
         description:e.target.description.value,
-         category:e.target.category.value   
+        category:e.target.category.value   
     }
     try{
 
 
         await axios.post(`${API_URL}/addExpense`,expense_item ,{headers:{"Authorization":token}})
         const expenses = await axios.get(`${API_URL}/getExpenses`,{headers:{"Authorization":token}})
-   
+       e.target.reset();
        showExpense(expenses.data)
          
     }catch(err){
@@ -57,7 +57,7 @@ async function isPremium(){
 
     try{
     const checkStatus = await axios.get(`${API_URL}/isPremium`,{headers:{"Authorization":token}})
-    console.log("YESSSS")
+    
 
     if(checkStatus.data.account === "PREMIUM")
     {
@@ -80,7 +80,7 @@ const allUsers =document.getElementById("leaderboard")
 
 async function showLeaderBoard() {
     ///ADD data that you want to show only for premium Users!!
-    console.log("BUTTON CLICKED")
+   
     allUsers.innerHTML = "";
 
     const response = await axios.get("http://localhost:3000/premium",{headers:{"Authorization":token}})

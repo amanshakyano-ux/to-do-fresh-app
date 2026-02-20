@@ -9,6 +9,7 @@
     },
     amount:{
         type:DataTypes.INTEGER
+
     },
     description:{
         type:DataTypes.STRING
