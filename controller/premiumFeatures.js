@@ -29,16 +29,17 @@ const getAllUsers = async(req,res)=>{
       attributes: [
         "id",
         "name",
-        [Sequelize.fn("SUM", Sequelize.col("Expenses.amount")), "totalExpense"]
+        "totalExpense"
+        // [Sequelize.fn("SUM", Sequelize.col("Expenses.amount")), "totalExpense"]
       ],
 
-      include: [
-        {
-          model: Expense,
-          attributes: []
-        }
-      ],
-      group: ["Users.id"],
+      // include: [
+      //   {
+      //     model: Expense,
+      //     attributes: []
+      //   }
+      // ],
+      // group: ["Users.id"],
       order: [[ "totalExpense", "DESC"]]
     });
 console.log("QUERY DONE >>>>>")
