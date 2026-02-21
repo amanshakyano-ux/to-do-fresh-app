@@ -4,6 +4,41 @@ console.log(token)
 const API_URL = "http://localhost:3000/expense"
 const expenseList = document.getElementById("expense-list");
 
+function categoryGenerator(){
+    const descInput = document.getElementById("desc");
+    const categoryInput = document.getElementById("category");
+
+let timer;
+
+descInput.addEventListener("keyup", function () {
+
+    clearTimeout(timer);
+
+    timer = setTimeout(async () => {
+
+        const description = descInput.value.trim();
+
+        if (description.length < 3) return;
+
+        try {
+
+            const response = await axios.post(   `${API_URL}/predictCategory`,{description }, {headers: { "Authorization": token }});
+ console.log("RESPONSE",response)
+            categoryInput.value = response.data;
+
+        } catch (err) {
+            console.log("AI Error:", err);
+        }
+
+    }, 800); // debounce
+});
+}
+
+categoryGenerator();
+
+
+
+
 async function handleExpense(e){
     e.preventDefault()
     const expense_item= {
@@ -20,8 +55,9 @@ async function handleExpense(e){
        showExpense(expenses.data)
          
     }catch(err){
-    
-         res.status(404).json({message:err.message})
+    console.log(err.message)
+    alert("Something went wrong");
+         
     }
 }
 
