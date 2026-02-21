@@ -12,10 +12,6 @@ const addExpense = async(req,res)=>{
     const user_id = req.user.id
     console.log("USER ID IS THIS >>>",user_id)
    
-
-
-   
-
     if(isStringInvalid(amount) || isStringInvalid(description) || isStringInvalid(category)){
        return res.status(404).json({success:false,message:"fields are mandatory"})
     }
