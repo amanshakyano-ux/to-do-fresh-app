@@ -23,7 +23,7 @@ descInput.addEventListener("keyup", function () {
         try {
 
             const response = await axios.post(   `${API_URL}/predictCategory`,{description }, {headers: { "Authorization": token }});
- console.log("RESPONSE",response)
+         console.log("RESPONSE",response)
             categoryInput.value = response.data;
 
         } catch (err) {
