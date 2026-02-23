@@ -7,8 +7,9 @@ const cors = require("cors")
 const userRoutes = require("./routes/userR")
 const expenseRoutes = require("./routes/expenseR")
 const vipUser = require("./routes/leaderboardR")
-const app = express()
+const passReset = require("./routes/passForgetR")
 
+const app = express()
 app.use(express.json())
 app.use(cors())
 
@@ -17,6 +18,8 @@ app.use("/user",userRoutes)
 app.use("/expense",expenseRoutes)
 
 app.use("/premium",vipUser)
+
+app.use("/called",passReset)
 
 db.sync({alter:true})
    .then(()=>{

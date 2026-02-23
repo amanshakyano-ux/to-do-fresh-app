@@ -82,15 +82,7 @@ const loginUser = async (req,res)=>{
      }
 
 }
-// const getAllUsers = async(req,res)=>{
-//     const userId= req.user.id
-//     const users = await  User.findAll( {
-//         where:{id:userId},
-//         attributes:["name","totalExpense"],
-//         orderBy:{}
-//         })
-   
-// }
+ 
 
 
 module.exports = {addUser,loginUser}
