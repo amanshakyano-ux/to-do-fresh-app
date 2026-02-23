@@ -45,15 +45,18 @@ const responseMsg = document.getElementById("response-msg")
     e.preventDefault()
     try{
         const email = e.target.email.value;
-        const res = await axios.post("http://localhost:3000/called/password/forgotpassword",{email})
-        console.log(res.data)
+        const res = await axios.post("http://localhost:3000/password/forgotpassword",{email})
+        
         
         responseMsg.textContent = `${res.data.message}`
-        responseMsg.style = "color:red"
+        responseMsg.style = "color:green"
         
     }catch(err)
     {
-        console.log("RESET PASS ERROR ___" , err.message)
+         responseMsg.textContent = `${err.response.data.message}`
+          responseMsg.style = "color:red"
+
+        console.log("RESET PASS ERROR ___" , err.response.data.message)
     }
         
     
