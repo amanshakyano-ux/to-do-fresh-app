@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit=resetForm(event)>
+    <h3>Fill Your Email Id Below!!</h3>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="email@gmail.com" required>
+    <button type="submit">Send Link</button>
+    </form>
+
+    <p id="response-msg"> </p>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+<script src="../public/login.js"></script>
+</body>
+</html>

@@ -82,7 +82,7 @@ const deleteExp = async (req, res) => {
       await transaction.rollback();
       return res.status(404).json({ message: "Item not found" });
     }
-    // const deleteAmt = expense.dataValues.amount;
+
     const user = await User.findByPk(user_id, { transaction });
      
     const newExpense = user.totalExpense - expense.amount;
