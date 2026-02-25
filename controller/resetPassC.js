@@ -35,7 +35,7 @@ apiKey.apiKey = process.env.SIB_API_KEY;
     }
 
 
-     const hashedPassword = await bcrypt.hash(newpassword, 10);
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
 
     // Update password
     await user.update({ password: hashedPassword });
@@ -97,16 +97,6 @@ const forgotpassword = async (req, res) => {
       isActive: true,
       UserId: user.id
     });
-
-
-
-
-
-
-
-      
-
-
     console.log("API KEY:", process.env.SIB_API_KEY);
     const tranEmailApi = new Sib.TransactionalEmailsApi();
     const sender = {

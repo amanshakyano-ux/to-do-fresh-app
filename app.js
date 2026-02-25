@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userR")
 const expenseRoutes = require("./routes/expenseR")
 const vipUser = require("./routes/leaderboardR")
 const passRoutes = require("./routes/passForgetR")
+const transactionRoutes = require("./routes/transactionPeriod")
 
 const app = express()
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +20,8 @@ app.use("/user",userRoutes)
 app.use("/expense",expenseRoutes)
 
 app.use("/premium",vipUser)
+
+app.use("/time",transactionRoutes)
 
 // app.use("/called",passReset)
 app.use("/password",passRoutes)
