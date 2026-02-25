@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="margin: 50px;"> 
+       <h2 id="page-title">Day to Day Expenses</h2>
+
+       <div id="report-bar" style="display: flex; gap: 5px;  ">
+
+       <button id="daily" type="submit">Daily</button>
+       <button id="weekly" type="submit">Weekly</button>
+       <button id="monthly" type="submit">Monthly</button>
+        
+       
+    </div>
+    <ul id="timely-exp"></ul>
+    
+    <p id="totalExp"></p>
+    <button type="submit" id="download-list"  style="display: none;">Download</button>
+       
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+<script src="../public/expenseReport.js"></script>
+</body>
+</html>

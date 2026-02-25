@@ -86,55 +86,77 @@ async function deleteExp(id){
     document.getElementById(`expense-${id}`).remove();
 }
 
-const premiumUser = document.getElementById("premium-user");
 
 
 async function isPremium(){
-
-    try{
-    const checkStatus = await axios.get(`${API_URL}/isPremium`,{headers:{"Authorization":token}})
     
-
-    if(checkStatus.data.account === "PREMIUM")
-    {
-           const leaderBoard = document.createElement('h3')
-           leaderBoard.style = "color: green; font-size: 20px; font-weight: bold; padding: 10px;";
-           leaderBoard.textContent = "Premium Feauture"
-           const leaderBoardBtn = document.createElement("button")
-           leaderBoardBtn.style= "margin:10px"
-           leaderBoardBtn.textContent = "LEADERBOARD"
-           leaderBoardBtn.addEventListener("click", showLeaderBoard);
-           leaderBoard.appendChild(leaderBoardBtn)
-           premiumUser.appendChild(leaderBoard)
-    }
-       }
+    try{
+        const checkStatus = await axios.get(`${API_URL}/isPremium`,{headers:{"Authorization":token}})
+        
+        
+        if(checkStatus.data.account === "PREMIUM")
+            {
+                showLeaderBoardBtn();
+                showReportBtn();
+            }
+        }
     catch(err){
         res.status(404).json({success:false,message:"isPremium error"+err.message})
-      }
+    }
 }
 const allUsers =document.getElementById("leaderboard")
 
 async function showLeaderBoard() {
     ///ADD data that you want to show only for premium Users!!
-   
+    
     allUsers.innerHTML = "";
-
+    
     const response = await axios.get("http://localhost:3000/premium",{headers:{"Authorization":token}})
     
     const leaderHeading = document.getElementById("leader-heading")
     leaderHeading.textContent = "Leaderboard"
     leaderHeading.style = "color:brown"
     const users = response.data;
-     users.forEach((user)=>{
+    users.forEach((user)=>{
         const li = document.createElement("li")
         li.textContent = `Name - ${user.name} || Total Expense - ${user.totalExpense}`
         allUsers.appendChild(li)
-     }) 
+    }) 
     
 }
 window.addEventListener("DOMContentLoaded",async()=>{
     isPremium();
-   const expenses = await axios.get(`${API_URL}/getExpenses`,{headers:{"Authorization":token}})
-   showExpense(expenses.data)
-
+    const expenses = await axios.get(`${API_URL}/getExpenses`,{headers:{"Authorization":token}})
+    showExpense(expenses.data)
+    
 })
+
+async function showLeaderBoardBtn() {
+           const premiumUser = document.getElementById("premium-user");
+           const leaderBoard = document.createElement('h3')
+           leaderBoard.style = "color: green; font-size: 20px; font-weight: bold; padding: 10px;";
+           leaderBoard.textContent = "Premium"
+           const leaderBoardBtn = document.createElement("button")
+           leaderBoardBtn.style= "margin:10px"
+           leaderBoardBtn.textContent = "LEADERBOARD"
+           leaderBoardBtn.addEventListener("click", showLeaderBoard);
+           leaderBoard.appendChild(leaderBoardBtn)
+           premiumUser.appendChild(leaderBoard)
+    
+}
+async function showReportBtn() {
+    const reportDiv = document.getElementById("report-sec")
+    const reportTag = document.createElement("h3")
+    reportTag.innerText = `Premium`
+    reportTag.style = "color: green; font-size: 20px; font-weight: bold; padding: 10px;"
+
+    const reportLink  = document.createElement("a")
+    reportLink.href = "../views/expenseReport.html"
+    reportLink.style = "color: black; font-size: 15px; font-weight: bold; padding: 10px;  "
+    reportLink.textContent = "Click to get the full expense report"
+
+    reportTag.appendChild(reportLink )
+    reportDiv.appendChild(reportTag)
+
+    
+}
