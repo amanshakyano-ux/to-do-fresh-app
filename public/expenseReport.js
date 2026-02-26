@@ -1,90 +1,119 @@
-
-
 const token = localStorage.getItem("token");
-
 const API_URL = "http://localhost:3000/time/transactions";
 
 const dailyBtn = document.getElementById("daily");
+const weeklyBtn = document.getElementById("weekly");
+const monthlyBtn = document.getElementById("monthly");
 
 const ul = document.getElementById("timely-exp");
-
-const weeklyBtn = document.getElementById("weekly");
-
+const totalExpense = document.getElementById("totalExp");
+const paginationDiv = document.getElementById("pagination");
 const downloadBtn = document.getElementById("download-list");
 
-const totalExpense = document.getElementById("totalExp");
+let currentPeriod = "";
+let currentPage = 1;
 
-const monthlyBtn = document.getElementById("monthly")
+/* ---------------- PERIOD BUTTONS ---------------- */
 
-monthlyBtn.addEventListener("click",async()=>{
+dailyBtn.addEventListener("click", () => {
+  currentPeriod = "daily";
+  currentPage = 1;
+  fetchExpenses();
+});
 
-  try{
-    
-    console.log("MONTH BUTTON GOT CLICKED")
-     
-    const res = await axios.get(`${API_URL}?period=monthly`,{
-        headers: { Authorization: token },
-        })
-        expenseByPeriod(res.data.monthlyExp,res.data.totalExp,"Monthly")
-    console.log(res.data.monthlyExp)
-    console.log(res.data.totalExp)
+weeklyBtn.addEventListener("click", () => {
+  currentPeriod = "weekly";
+  currentPage = 1;
+  fetchExpenses();
+});
 
-  }catch(err)
-  {
-    console.log("Month sec frontend err", err.message)
+monthlyBtn.addEventListener("click", () => {
+  currentPeriod = "monthly";
+  currentPage = 1;
+  fetchExpenses();
+});
+
+/* ---------------- FETCH FUNCTION ---------------- */
+
+async function fetchExpenses() {
+  try {
+    const res = await axios.get(
+      `${API_URL}?period=${currentPeriod}&page=${currentPage}`,
+      { headers: { Authorization: token } }
+    );
+
+    renderExpenses(res.data);
+
+  } catch (err) {
+    console.log("Fetch error:", err.message);
   }
-})
+}
 
-    weeklyBtn.addEventListener("click", async () => {
-    try {
-        const res = await axios.get(`${API_URL}?period=weekly`, {
-        headers: { Authorization: token },
-        });
+/* ---------------- RENDER DATA ---------------- */
 
-       expenseByPeriod(res.data.weeklyExp, res.data.totalExp,"Weekly");
-    } catch (err) {
-        console.log("WEEKLY SEC ERROR MESSAGE >", err.message);
-    }
-    });
-
-    dailyBtn.addEventListener("click", async () => {
-        try {
-            const res = await axios.get(`${API_URL}?period=daily`, {
-            headers: { Authorization: token },
-            });
-            expenseByPeriod(res.data.dailyExp, res.data.totalExp,"Daily");
-        } catch (err) {
-            console.log("Daily Bar ERROR", err.message);
-        }
-    });
- 
-
-
-function expenseByPeriod(expList, totalExp,period) {
+function renderExpenses(result) {
   ul.innerHTML = "";
   totalExpense.innerHTML = "";
+  paginationDiv.innerHTML = "";
 
-  expList.forEach((ex) => {
+  if (result.data.length === 0) {
+    ul.innerHTML = "<li>No Data Found</li>";
+    return;
+  }
+
+  result.data.forEach((ex) => {
     const li = document.createElement("li");
-    li.textContent = `${ex.amount}|| ${ex.description} || ${ex.category}`;
-
+    li.textContent = `${ex.amount} || ${ex.description} || ${ex.category}`;
     ul.appendChild(li);
   });
 
-  downloadBtn.style.display = "inline-block";
-  totalExpense.innerHTML = `<h4> Total Expense = ${totalExp}</h4>`;
+  totalExpense.innerHTML = `<h4>Total Expense = ${result.totalExp}</h4>`;
 
-  downloadBtn.addEventListener("click", async () => {  
-    let csv = "Amount,Category,Description\n";
-    expList.forEach((ex) => {
-      csv += `${ex.amount}, ${ex.description}, ${ex.category}\n`;
+  createPagination(result.totalPages);
+}
+
+/* ---------------- PAGINATION ---------------- */
+
+function createPagination(totalPages) {
+  paginationDiv.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.innerText = i;
+
+    if (i === currentPage) {
+      btn.style.backgroundColor = "black";
+      btn.style.color = "white";
+    }
+
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      fetchExpenses();
     });
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${period} Expense Report.csv`;
-    a.click();
-  });
+    paginationDiv.appendChild(btn);
+  }
 }
+
+/* ---------------- DOWNLOAD CSV ---------------- */
+
+downloadBtn.addEventListener("click", () => {
+
+  const items = document.querySelectorAll("#timely-exp li");
+
+  if (items.length === 0) return;
+
+  let csv = "Amount,Description,Category\n";
+
+  items.forEach(item => {
+    csv += item.textContent.replace(/\|\|/g, ",") + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${currentPeriod}-Expense-Report.csv`;
+  a.click();
+});
