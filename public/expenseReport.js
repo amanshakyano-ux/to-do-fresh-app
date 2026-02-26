@@ -13,6 +13,20 @@ const downloadBtn = document.getElementById("download-list");
 let currentPeriod = "";
 let currentPage = 1;
 
+const limitSelect = document.getElementById("limit-select");
+
+let limit = localStorage.getItem("expenseLimit") || 10;
+
+limitSelect.value = limit;
+ 
+limitSelect.addEventListener("change", () => {
+  limit = limitSelect.value;
+
+  localStorage.setItem("expenseLimit", limit);
+
+  currentPage = 1; // reset to page 1
+  fetchExpenses();
+});
 /* ---------------- PERIOD BUTTONS ---------------- */
 
 dailyBtn.addEventListener("click", () => {
@@ -34,11 +48,10 @@ monthlyBtn.addEventListener("click", () => {
 });
 
 /* ---------------- FETCH FUNCTION ---------------- */
-
 async function fetchExpenses() {
   try {
     const res = await axios.get(
-      `${API_URL}?period=${currentPeriod}&page=${currentPage}`,
+      `${API_URL}?period=${currentPeriod}&page=${currentPage}&limit=${limit}`,
       { headers: { Authorization: token } }
     );
 
