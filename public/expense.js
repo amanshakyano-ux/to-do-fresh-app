@@ -1,6 +1,6 @@
 
 const token = localStorage.getItem("token")
-console.log(token)
+ 
 const API_URL = "http://localhost:3000/expense"
 const expenseList = document.getElementById("expense-list");
 
@@ -23,7 +23,7 @@ descInput.addEventListener("keyup", function () {
         try {
 
             const response = await axios.post(   `${API_URL}/predictCategory`,{description }, {headers: { "Authorization": token }});
-         console.log("RESPONSE",response)
+        
             categoryInput.value = response.data;
 
         } catch (err) {

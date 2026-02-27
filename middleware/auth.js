@@ -5,15 +5,15 @@
 
 const authenticate = async(req,res,next)=>{
     try{
-         console.log("called security")
+         
         
         const token = req.headers['authorization']
         
         const user = jwt.verify(token,process.env.JWT_SECRETKEY)
-        console.log(`USER ID>> ${user.userId}`)
+     
         User.findByPk(user.userId)
             .then(user=>{
-                // console.log("USER DATA++++",user.id)
+               
                 req.user =  user;
                  
                 next();

@@ -20,25 +20,18 @@ const isPremium = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("gelAllUsers called");
+     
     const users = await User.findAll({
       attributes: [
         "id",
         "name",
         "totalExpense",
-        // [Sequelize.fn("SUM", Sequelize.col("Expenses.amount")), "totalExpense"]
+         
       ],
-
-      // include: [
-      //   {
-      //     model: Expense,
-      //     attributes: []
-      //   }
-      // ],
-      // group: ["Users.id"],
+ 
       order: [["totalExpense", "DESC"]],
     });
-    console.log("QUERY DONE >>>>>");
+     
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -79,8 +79,9 @@ function renderExpenses(result) {
     li.textContent = `${ex.amount} || ${ex.description} || ${ex.category}`;
     ul.appendChild(li);
   });
-
-  totalExpense.innerHTML = `<h4>Total Expense = ${result.totalExp}</h4>`;
+    downloadBtn.style.display = "inline-block";
+    downloadBtn.style.margin = "10px"
+    totalExpense.innerHTML = `<h4>Total Expense = ${result.totalExp}</h4>`;
 
   createPagination(result.totalPages);
 }

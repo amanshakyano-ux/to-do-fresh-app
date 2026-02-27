@@ -1,7 +1,10 @@
 require("dotenv").config();
 const express = require("express")
 require("./models")
- 
+
+const fs = require("fs")
+const path = require("path")
+
 const db = require("./utils/db-connection")
 const cors = require("cors")
 const userRoutes = require("./routes/userR")
@@ -10,10 +13,23 @@ const vipUser = require("./routes/leaderboardR")
 const passRoutes = require("./routes/passForgetR")
 const transactionRoutes = require("./routes/transactionPeriod")
 
+const accessLogStream = fs.createWriteStream(
+   path.join(__dirname,"access.log"),
+{flags:"a"}
+); 
+ 
+const compression = require("compression")
+const morgan = require("morgan")
 const app = express()
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cors())
+
+app.use(compression())
+app.use(morgan("combined",{stream:accessLogStream}))
+
 
 app.use("/user",userRoutes)
 

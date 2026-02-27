@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { v4: uuidv4 } = require("uuid")
-console.log("API KEY:", process.env.SIB_API_KEY);
+ 
 const User = require("../models/user")
 const bcrypt = require("bcrypt");
 const ForgotPasswordRequests = require("../models/resetPass")
@@ -18,8 +18,8 @@ apiKey.apiKey = process.env.SIB_API_KEY;
   try{
     const {id} = req.params;
     const { newpassword } = req.body;
-    console.log("updatePassword called")
-    console.log(newpassword)
+     
+    
     const request = await ForgotPasswordRequests.findOne({
           where: { id, isActive: true }
         });
@@ -84,7 +84,7 @@ const resetPassword = async (req, res) => {
 
 const forgotpassword = async (req, res) => {
   try {
-    console.log("EMAIL TOOK")
+    
     //import the uuid from forgetpass table;
        const { email } = req.body;
         const user = await User.findOne({ where: { email } });
@@ -97,7 +97,7 @@ const forgotpassword = async (req, res) => {
       isActive: true,
       UserId: user.id
     });
-    console.log("API KEY:", process.env.SIB_API_KEY);
+    
     const tranEmailApi = new Sib.TransactionalEmailsApi();
     const sender = {
       email: "koo860353@gmail.com",

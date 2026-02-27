@@ -30,7 +30,7 @@ ${description}
 Category:
         ` 
     })
-    console.log(`AI GENERATED CATEGORY -- ${response.text}`)
+     
     res.status(200).json(response.text);
   })();
 

@@ -12,7 +12,7 @@ const addExpense = async (req, res) => {
 
     const user_id = req.user.id;
 
-    console.log("USER ID IS THIS >>>", user_id);
+    
 
     if (
       isStringInvalid(amount) ||
@@ -25,7 +25,7 @@ const addExpense = async (req, res) => {
     const user = await User.findOne({
       where: { id: user_id },
     });
-    console.log(user.totalExpense, "TOTAL EXPENSEEESSS");
+    
 
     const newTotalExpense = user.totalExpense + Number(amount);
     
@@ -51,7 +51,7 @@ const addExpense = async (req, res) => {
 
 const getAllExpense = async (req, res) => {
   const user_id = req.user.id;
-  console.log(user_id);
+  
   const expenses = await Expense.findAll({
     where: {
       UserId: req.user.id,
