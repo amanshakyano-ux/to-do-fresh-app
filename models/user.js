@@ -22,7 +22,8 @@ const User = sequelize.define("Users",{
          
     },
     account:{
-        type:DataTypes.STRING
+        type:DataTypes.STRING,
+        defaultValue:"PREMIUM"
     }
 })
 module.exports = User;
