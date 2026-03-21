@@ -49,9 +49,7 @@ const addExpense = async (req, res) => {
   }
 };
 
-const getAllExpense = async (req, res) => {
-  const user_id = req.user.id;
-  
+const getAllExpense = async (req, res) => { 
   const expenses = await Expense.findAll({
     where: {
       UserId: req.user.id,

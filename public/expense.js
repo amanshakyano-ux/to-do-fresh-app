@@ -3,6 +3,16 @@ const token = localStorage.getItem("token")
  
 const API_URL = "http://localhost:3000/expense"
 const expenseList = document.getElementById("expense-list");
+ 
+ 
+
+ 
+
+
+
+
+
+
 
 function categoryGenerator(){
     const descInput = document.getElementById("desc");
@@ -88,6 +98,37 @@ async function deleteExp(id){
 
 
 
+
+
+
+                                 //previous download files
+async function showDownloadHistory() {
+  try {
+    const res = await axios.get(`${API_URL}/files`, {
+      headers: { Authorization: token }
+    });
+
+    const container = document.getElementById("history");
+
+    container.innerHTML = "<h3>Download History</h3>";
+
+    res.data.files.forEach(file => {
+      const div = document.createElement("div");
+
+      div.innerHTML = `
+        <a href="${file.fileUrl}" target="_blank">
+          ${new Date(file.createdAt).toLocaleString()}
+        </a>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function isPremium(){
     
     try{
@@ -96,18 +137,57 @@ async function isPremium(){
         
         if(checkStatus.data.account === "PREMIUM")
             {
+                  
                 showLeaderBoardBtn();
                 showReportBtn();
+                downloadAllExp();
+                showDownloadHistory();
             }
-        }
-    catch(err){
-        res.status(404).json({success:false,message:"isPremium error"+err.message})
+        else
+        {
+              console.log("User is not premium ❌");
+      alert("You are not a premium user");
+        }    
+        
+    
+     } catch(err){
+       console.log("isPremium error:", err.message);
     }
 }
+
+  function downloadAllExp(){
+    try{
+         
+        const premTag = document.getElementById("prem-down")
+        premTag.textContent = "Premium";
+        premTag.style.color  = "green";
+        if (document.getElementById("download-btn")) return;
+        const downAllExpBtn = document.createElement("button")
+        downAllExpBtn.textContent = "Download Expense"
+        downAllExpBtn.style.margin = "10px"
+        premTag.appendChild(downAllExpBtn)
+        downAllExpBtn.onclick = async()=>{
+        
+        const response = await axios.get(`${API_URL}/downlod-expenses`,{headers:{"Authorization":token}})
+         
+        const a = document.createElement("a");
+        a.href = response.data.fileURL;     //S3 URL
+        a.download = "expense.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+    }catch(err)
+    {
+        console.log(err.message)
+    }
+}
+
+
 const allUsers =document.getElementById("leaderboard")
 
 async function showLeaderBoard() {
-    ///ADD data that you want to show only for premium Users!!
+   
     
     allUsers.innerHTML = "";
     
