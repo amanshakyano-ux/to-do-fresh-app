@@ -1,6 +1,6 @@
 require("dotenv").config();
-const genai = require("@google/genai");
-const ai = new genai.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// const genai = require("@google/genai");
+// const ai = new genai.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const categoryGen = async (req, res) => {
 
