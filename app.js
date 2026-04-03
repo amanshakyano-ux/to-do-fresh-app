@@ -11,10 +11,10 @@ require("./models")
 const fs = require("fs")
 const path = require("path")
  
-const db = require("./utils/db-connection")
-const cors = require("cors")
  
 const cors = require("cors")
+ 
+ 
 const morgan = require("morgan")
 const compression = require("compression")
 
@@ -26,7 +26,7 @@ const vipUser = require("./routes/leaderboardR")
 const passRoutes = require("./routes/passForgetR")
 const transactionRoutes = require("./routes/transactionPeriod")
  
-const morgan = require("morgan")
+ 
  
  
 
@@ -49,21 +49,6 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan("combined",{stream:accessLogStream}))
  
-
- 
-
-
-app.use("/user",userRoutes)
-
-app.use("/expense",expenseRoutes)
-
-app.use("/premium",vipUser)
-
-app.use("/time",transactionRoutes)
-
- 
-app.use("/password",passRoutes)
-
  
 app.use(compression())
 
