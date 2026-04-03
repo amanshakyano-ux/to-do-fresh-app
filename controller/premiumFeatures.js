@@ -1,7 +1,88 @@
+<<<<<<< HEAD
+=======
+require("dotenv").config()
+const AWS = require('aws-sdk');
+const FileURL = require("../models/fileUrl")
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.IAM_USER_KEY,
+  secretAccessKey: process.env.IAM_USER_SECRET,
+  region: "ap-south-1"
+});
+console.log("KEY:", process.env.IAM_USER_KEY);
+console.log("SECRET:", process.env.IAM_USER_SECRET);
+console.log("BUCKET:", process.env.BUCKET_NAME);
+
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 const { Sequelize, where } = require("sequelize");
 const { User, Expense } = require("../models");
 const { Op, sum } = require("sequelize");
 
+<<<<<<< HEAD
+=======
+
+const getDownloadedFiles = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+
+    const files = await FileURL.findAll({
+      where: { UserId: user_id },
+      order: [["createdAt", "DESC"]]
+    });
+
+    res.status(200).json({ files });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+                               
+
+const downloadAllExp = async(req,res)=>{
+  try{
+        const user_id = req.user.id;
+        const expenses = await Expense.findAll({
+      where:{
+        UserId:user_id
+      },
+      attributes:["amount","description"],
+      order:[["amount","DESC"]]
+    })
+    let csv = "Description,Amount\n";
+
+    expenses.forEach(e=>{
+      csv += `${e.description}, ${e.amount}\n`
+    })
+   
+
+    const filename = `expense_${req.user.id}_${new Date().toISOString()}.csv`
+
+    const response = await s3.upload({
+      Bucket:process.env.BUCKET_NAME,
+      Key:filename,
+      Body:csv,
+      ContentType:"text/csv"
+    }).promise();
+    const fileURL = response.Location
+
+          await FileURL.create({
+        fileUrl: fileURL,
+        UserId: user_id
+      });
+
+        res.status(200).json({
+        success: true,
+        fileURL
+        });
+
+  }catch(err){
+  console.log("ERROR 🔴:", err);   // 👈 FULL error print hoga
+  res.status(500).json({success:false, message:err.message})
+}
+}
+
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 const isPremium = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -17,6 +98,10 @@ const isPremium = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 const getAllUsers = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -135,4 +220,8 @@ const getAllUsers = async (req, res) => {
 };
 
 
+<<<<<<< HEAD
 module.exports = { getAllUsers, isPremium, expenseReport };
+=======
+module.exports = { getAllUsers, isPremium, expenseReport,downloadAllExp,getDownloadedFiles };
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3

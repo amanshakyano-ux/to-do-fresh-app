@@ -3,6 +3,19 @@ const token = localStorage.getItem("token")
  
 const API_URL = "http://localhost:3000/expense"
 const expenseList = document.getElementById("expense-list");
+<<<<<<< HEAD
+=======
+ 
+ 
+
+ 
+
+
+
+
+
+
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 
 function categoryGenerator(){
     const descInput = document.getElementById("desc");
@@ -88,6 +101,40 @@ async function deleteExp(id){
 
 
 
+<<<<<<< HEAD
+=======
+
+
+
+                                 //previous download files
+async function showDownloadHistory() {
+  try {
+    const res = await axios.get(`${API_URL}/files`, {
+      headers: { Authorization: token }
+    });
+
+    const container = document.getElementById("history");
+
+    container.innerHTML = "<h3>Download History</h3>";
+
+    res.data.files.forEach(file => {
+      const div = document.createElement("div");
+
+      div.innerHTML = `
+        <a href="${file.fileUrl}" target="_blank">
+          ${new Date(file.createdAt).toLocaleString()}
+        </a>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 async function isPremium(){
     
     try{
@@ -96,6 +143,7 @@ async function isPremium(){
         
         if(checkStatus.data.account === "PREMIUM")
             {
+<<<<<<< HEAD
                 showLeaderBoardBtn();
                 showReportBtn();
             }
@@ -108,6 +156,59 @@ const allUsers =document.getElementById("leaderboard")
 
 async function showLeaderBoard() {
     ///ADD data that you want to show only for premium Users!!
+=======
+                  
+                showLeaderBoardBtn();
+                showReportBtn();
+                downloadAllExp();
+                showDownloadHistory();
+            }
+        else
+        {
+              console.log("User is not premium ❌");
+      alert("You are not a premium user");
+        }    
+        
+    
+     } catch(err){
+       console.log("isPremium error:", err.message);
+    }
+}
+
+  function downloadAllExp(){
+    try{
+         
+        const premTag = document.getElementById("prem-down")
+        premTag.textContent = "Premium";
+        premTag.style.color  = "green";
+        if (document.getElementById("download-btn")) return;
+        const downAllExpBtn = document.createElement("button")
+        downAllExpBtn.textContent = "Download Expense"
+        downAllExpBtn.style.margin = "10px"
+        premTag.appendChild(downAllExpBtn)
+        downAllExpBtn.onclick = async()=>{
+        
+        const response = await axios.get(`${API_URL}/downlod-expenses`,{headers:{"Authorization":token}})
+         
+        const a = document.createElement("a");
+        a.href = response.data.fileURL;     //S3 URL
+        a.download = "expense.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+    }catch(err)
+    {
+        console.log(err.message)
+    }
+}
+
+
+const allUsers =document.getElementById("leaderboard")
+
+async function showLeaderBoard() {
+   
+>>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
     
     allUsers.innerHTML = "";
     
