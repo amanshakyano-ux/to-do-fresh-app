@@ -1,44 +1,32 @@
 require("dotenv").config();
-<<<<<<< HEAD
+
 const genai = require("@google/genai");
-const ai = new genai.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-=======
-// const genai = require("@google/genai");
-// const ai = new genai.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
+const ai = new genai.GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 const categoryGen = async (req, res) => {
+  try {
+    const { description } = req.body;
 
-  const { description } = req.body;
-
-
- ( async function category() {
     const response = await ai.models.generateContent({
-        model:"gemini-3-flash-preview",
-        contents:`
-        You are a smart expense categorization assistant.
+      model: "gemini-3-flash-preview",
+      contents: `
+You are a smart expense categorization assistant.
 
-Your task:
-Based on the given expense description, return only one most relevant category name.
+Return only one category name.
 
-Rules:
-- Return only the category name.
-- Do not explain anything.
-- Do not add extra words.
-- Keep category name short (1–2 words).
-- First letter capitalized.
-- No punctuation.
-
-Expense Description:
+Expense:
 ${description}
 
 Category:
-        ` 
-    })
-     
+      `,
+    });
+
     res.status(200).json(response.text);
-  })();
-
-
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
+
 module.exports = { categoryGen };

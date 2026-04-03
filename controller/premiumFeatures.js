@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-=======
+ 
+ 
 require("dotenv").config()
 const AWS = require('aws-sdk');
 const FileURL = require("../models/fileUrl")
@@ -13,13 +13,12 @@ console.log("KEY:", process.env.IAM_USER_KEY);
 console.log("SECRET:", process.env.IAM_USER_SECRET);
 console.log("BUCKET:", process.env.BUCKET_NAME);
 
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
+ 
 const { Sequelize, where } = require("sequelize");
 const { User, Expense } = require("../models");
 const { Op, sum } = require("sequelize");
 
-<<<<<<< HEAD
-=======
+ 
 
 const getDownloadedFiles = async (req, res) => {
   try {
@@ -82,7 +81,7 @@ const downloadAllExp = async(req,res)=>{
 }
 }
 
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
+ 
 const isPremium = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -98,10 +97,6 @@ const isPremium = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
 const getAllUsers = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -220,8 +215,8 @@ const getAllUsers = async (req, res) => {
 };
 
 
-<<<<<<< HEAD
+ 
 module.exports = { getAllUsers, isPremium, expenseReport };
-=======
+ 
 module.exports = { getAllUsers, isPremium, expenseReport,downloadAllExp,getDownloadedFiles };
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
+ 
