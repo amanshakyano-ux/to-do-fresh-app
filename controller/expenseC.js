@@ -49,13 +49,13 @@ const addExpense = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
+ 
 const getAllExpense = async (req, res) => {
   const user_id = req.user.id;
   
-=======
+ 
 const getAllExpense = async (req, res) => { 
->>>>>>> 9c55c1579cba2be873530755941cb95dcc1018c3
+ 
   const expenses = await Expense.findAll({
     where: {
       UserId: req.user.id,
@@ -106,4 +106,4 @@ const deleteExp = async (req, res) => {
   }
 };
 
-module.exports = { addExpense, getAllExpense, deleteExp };
+module.exports = { addExpense, getAllExpense, deleteExp }
