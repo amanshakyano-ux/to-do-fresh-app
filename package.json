@@ -1,0 +1,41 @@
+{
+  "name": "to-do-again",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amanshakyano-ux/to-do-fresh-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/amanshakyano-ux/to-do-fresh-app/issues"
+  },
+  "homepage": "https://github.com/amanshakyano-ux/to-do-fresh-app#readme",
+  "devDependencies": {
+    "@google/genai": "^1.48.0",
+    "aws-sdk": "^2.1693.0",
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.20.0",
+    "nodemon": "^3.1.14",
+    "npm": "^11.12.1",
+    "sequelize": "^6.37.8",
+    "sib-api-v3-sdk": "^8.5.0",
+    "uuid": "^13.0.0"
+  }
+}
