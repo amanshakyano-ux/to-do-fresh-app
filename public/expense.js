@@ -1,5 +1,5 @@
 const token = localStorage.getItem("token");
-const API_URL = "http://localhost:3000/expense";
+const API_URL = "/expense";
 const expenseList = document.getElementById("expense-list");
 
 // ---------------- CATEGORY PREDICTION ----------------
@@ -204,7 +204,7 @@ async function showLeaderBoard() {
         allUsers.innerHTML = "";
 
         const response = await axios.get(
-            "http://localhost:3000/premium",
+            "/premium",
             { headers: { Authorization: token } }
         );
 
@@ -249,7 +249,7 @@ function showReportBtn() {
     tag.style = "color: green; font-weight: bold; padding: 10px;";
 
     const link = document.createElement("a");
-    link.href = "../views/expenseReport.html";
+    link.href = "expenseReport.html";
     link.textContent = "Click to get the full expense report";
     link.style = "color: black; font-size: 15px; font-weight: bold; padding: 10px;";
 
