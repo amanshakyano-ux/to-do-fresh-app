@@ -18,7 +18,7 @@
         localStorage.setItem("token", user.data.token)
         
         alert("Welcome")
-        window.location.href = "../views/expense.html"
+        window.location.href = "/expense.html"
 
     }
     catch(err){
@@ -34,7 +34,7 @@ if (reset_pass_btn) {
 }
 
  async function resetPass(){
-     window.location.href = "../views/resetPassForm.html";
+     window.location.href = "/resetPassForm.html";
  }
 
 const responseMsg = document.getElementById("response-msg")
