@@ -12,7 +12,7 @@ async function signup(e){
 
         const user = await axios.post(API_URL,userDetails)
         
-        window.location.href = "../views/login.html"
+        window.location.href = "/login.html"
     }catch(err)
     {
          

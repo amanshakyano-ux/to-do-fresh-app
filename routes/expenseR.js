@@ -11,7 +11,7 @@ const {authenticate} = require("../middleware/auth")
 
 router.get("/download-expenses",authenticate,downloadAllExp)
 router.get("/files",authenticate,getDownloadedFiles)
-// router.post("/predictCategory",authenticate, categoryGen)
+router.post("/predictCategory",authenticate, categoryGen)
 router.post("/addExpense", authenticate,  addExpense)
 router.get("/getExpenses",authenticate, getAllExpense)
 router.delete("/deleteExpense/:id",authenticate, deleteExp)

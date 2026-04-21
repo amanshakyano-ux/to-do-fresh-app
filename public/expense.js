@@ -29,7 +29,7 @@ function categoryGenerator() {
             } catch (err) {
                 console.log("AI Error:", err);
             }
-        }, 800);
+        }, 400);
     });
 }
 

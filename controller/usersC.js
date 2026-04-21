@@ -66,6 +66,7 @@ const loginUser = async (req,res)=>{
                      throw new Error("Something went wrong")
                 }
                 if(result ===  true){
+                    console.log("HEROOROROROROOR")
                     res.status(200).json({success:true,message:"User logged in successfully", token :generateAccessToken(user.id,user.name)})
                 }   
                  else
