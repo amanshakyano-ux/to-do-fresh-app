@@ -1,9 +1,11 @@
 const User = require("./user")
 const Expense = require("./expense")
 const ForgotPasswordRequests  = require("./resetPass")
- 
- 
+const Payment = require("./payment")
 const FileURL = require("./fileUrl")
+
+User.hasMany(Payment,{foreignKey:"UserId",onDelete:"cascade"})
+Payment.belongsTo(User,{foreignKey:"UserId"})
 
 
 User.hasMany(FileURL)
@@ -20,5 +22,5 @@ User.hasMany(ForgotPasswordRequests );
 ForgotPasswordRequests.belongsTo(User);
 
 module.exports = {
-    User,Expense,ForgotPasswordRequests 
+    User,Expense,ForgotPasswordRequests,FileURL
 }

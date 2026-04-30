@@ -19,6 +19,7 @@ const vipUser = require("./routes/leaderboardR");
 const passRoutes = require("./routes/passForgetR");
 const transactionRoutes = require("./routes/transactionPeriod");
 
+const paymentRoutes = require("./routes/paymentRoutes"); // correct path check
 // Create log file safely
 const logPath = path.join(__dirname, "access.log");
 const accessLogStream = fs.createWriteStream(logPath, { flags: "a" });
@@ -27,6 +28,7 @@ const app = express();
 
 // Middleware
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
@@ -34,6 +36,8 @@ app.use(morgan("combined", { stream: accessLogStream }));
 app.use(compression());
 
 // Routes
+
+app.use("/payment", paymentRoutes);
 app.use("/user", userRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/premium", vipUser);
@@ -62,11 +66,16 @@ app.get("/resetPassForm.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "resetPassForm.html"));
 });
 
+app.get("/success",(req,res)=>{
+  res.sendFile(path.join(__dirname,"views","successPage.html"))
+})
+
+
 // Port fix ✅
 const PORT = process.env.PORT || 3000;
 
 // DB + Server start
-db.sync({ alter: false })
+db.sync({ alter: true })
   .then(() => {
     app.listen(PORT, () => {
       console.log(`✅ SERVER IS RUNNING ON PORT ${PORT}`);

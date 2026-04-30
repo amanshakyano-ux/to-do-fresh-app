@@ -1,8 +1,81 @@
 const token = localStorage.getItem("token");
+console.log("TOKEN:", token);
 const API_URL = "/expense";
 const expenseList = document.getElementById("expense-list");
+const cashfree = Cashfree({
+    mode:   "sandbox"
+});
 
-// ---------------- CATEGORY PREDICTION ----------------
+     let premiumInit = false;
+
+function buy_premium_pack() {
+    if (premiumInit) return;
+    premiumInit = true;
+
+    const buyBtn = document.getElementById("buy-premium");
+    if (!buyBtn) return;
+
+    buyBtn.style.display = "block";
+
+    buyBtn.onclick = async () => {
+        console.log("BUTTON CLICKED ✅");
+        await buyingPaidfeature();
+    };
+}
+
+
+// ✅ CORRECT FUNCTION (single definition)
+async function buyingPaidfeature() {
+    try {
+       console.log("TOKEN", token)
+        const res = await axios.post(
+            "/payment/create-order",
+            {},
+            { headers: { Authorization: token } }
+        );
+        console.log(res.data.paymentSessionId, "SESSION ID IS THIS")
+       const paymentSessionId = res.data.paymentSessionId;
+       console.log(paymentSessionId)
+
+        let checkoutOptions = {
+        paymentSessionId,
+
+        //? New page payment options
+
+        redirectTarget : "_self",   //default;
+
+    }
+    
+    //ab yhaan checkout process start hogii session dekr
+      const output =  await cashfree.checkout(checkoutOptions);
+      console.log(output, "Output")
+        
+
+         
+
+    } catch (err) {
+         
+      console.log("Payment Error FULL:", err.response?.data || err.message);
+    alert("Unable to start payment");
+ 
+    }
+}
+
+ 
+
+// function startPayment(sessionId) {
+//     const cashfree = Cashfree({
+//         mode: "sandbox"
+//     });
+
+//     cashfree.checkout({
+//         paymentSessionId: sessionId,
+//         redirectTarget: "_modal"
+//     });
+// }
+
+// ---------------- CATEGORY P 
+
 function categoryGenerator() {
     const descInput = document.getElementById("desc");
     const categoryInput = document.getElementById("category");
@@ -36,7 +109,7 @@ function categoryGenerator() {
 categoryGenerator();
 
 
-// ---------------- ADD EXPENSE ----------------
+// ---------------- ADD EXPENSE ----- 
 async function handleExpense(e) {
     e.preventDefault();
 
@@ -65,7 +138,7 @@ async function handleExpense(e) {
 }
 
 
-// ---------------- SHOW EXPENSES ----------------
+// ---------------- SHOW EXPENSES 
 function showExpense(expenses) {
     expenseList.innerHTML = "";
 
@@ -91,7 +164,7 @@ function showExpense(expenses) {
 }
 
 
-// ---------------- DELETE EXPENSE ----------------
+//   DELETE EXPENSE ----------------
 async function deleteExp(id) {
     try {
         await axios.delete(`${API_URL}/deleteExpense/${id}`, {
@@ -107,7 +180,7 @@ async function deleteExp(id) {
 }
 
 
-// ---------------- DOWNLOAD HISTORY ----------------
+// ---- - DOWNLOAD HISTORY ----------------
 async function showDownloadHistory() {
     try {
         const res = await axios.get(`${API_URL}/files`, {
@@ -138,12 +211,17 @@ async function showDownloadHistory() {
 // ---------------- PREMIUM CHECK ----------------
 async function isPremium() {
     try {
+
         const res = await axios.get(`${API_URL}/isPremium`, {
             headers: { Authorization: token }
         });
+          const buyBtn = document.getElementById("buy-premium");
 
-        if (res.data.account === "PREMIUM") {
+        if (res.data.isPremium) {
+            if (buyBtn) buyBtn.style.display = "none";
             showPremiumUI();
+        } else {
+            buy_premium_pack(); 
         }
 
     } catch (err) {
@@ -154,6 +232,7 @@ async function isPremium() {
 
 // ---------------- PREMIUM UI HANDLER ----------------
 function showPremiumUI() {
+    console.log("HERORROOROROROROROROR")
     showLeaderBoardBtn();
     showReportBtn();
     downloadAllExp();
@@ -162,7 +241,7 @@ function showPremiumUI() {
 
 
 // ---------------- DOWNLOAD ALL EXPENSE ----------------
-function downloadAllExp() {
+async function downloadAllExp() {
     try {
         const premTag = document.getElementById("prem-down");
         premTag.textContent = "Premium";
@@ -173,6 +252,7 @@ function downloadAllExp() {
         const btn = document.createElement("button");
         btn.textContent = "Download Expense";
         btn.style.margin = "10px";
+        btn.id = "download-btn";
 
         btn.onclick = async () => {
             const response = await axios.get(
@@ -189,6 +269,7 @@ function downloadAllExp() {
         };
 
         premTag.appendChild(btn);
+          
 
     } catch (err) {
         console.log(err.message);
@@ -265,6 +346,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const expenses = await axios.get(`${API_URL}/getExpenses`, {
         headers: { Authorization: token }
     });
-
+     
     showExpense(expenses.data);
 });

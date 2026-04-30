@@ -9,9 +9,7 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.IAM_USER_SECRET,
   region: "ap-south-1"
 });
-console.log("KEY:", process.env.IAM_USER_KEY);
-console.log("SECRET:", process.env.IAM_USER_SECRET);
-console.log("BUCKET:", process.env.BUCKET_NAME);
+ 
 
  
 const { Sequelize, where } = require("sequelize");
@@ -84,16 +82,15 @@ const downloadAllExp = async(req,res)=>{
  
 const isPremium = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const user = await User.findByPk(req.user.id);
 
-    const accType = await User.findOne({
-      where: { id: userId },
-      attributes: ["account"],
+    res.status(200).json({
+      isPremium: user.isPremium   // ✅ correct column
     });
-    res.status(200).json(accType);
+
   } catch (err) {
-    console.log("ERROR FROM ISPREMIUM FUNCT", err.message);
-    return res.status(500).json({ error: "Something went wrong" });
+    console.log("IS PREMIUM ERROR 🔴:", err);
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -215,8 +212,11 @@ const getAllUsers = async (req, res) => {
 };
 
 
- 
-module.exports = { getAllUsers, isPremium, expenseReport };
- 
-module.exports = { getAllUsers, isPremium, expenseReport,downloadAllExp,getDownloadedFiles };
+ module.exports = {
+  getAllUsers,
+  isPremium,
+  expenseReport,
+  downloadAllExp,
+  getDownloadedFiles
+};
  

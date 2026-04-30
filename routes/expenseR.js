@@ -15,7 +15,7 @@ router.post("/predictCategory",authenticate, categoryGen)
 router.post("/addExpense", authenticate,  addExpense)
 router.get("/getExpenses",authenticate, getAllExpense)
 router.delete("/deleteExpense/:id",authenticate, deleteExp)
-router.get("/isPremium",authenticate, isPremium)
+router.get("/isPremium", authenticate,isPremium)
  
 
  
