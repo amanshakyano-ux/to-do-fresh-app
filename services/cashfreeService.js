@@ -1,4 +1,4 @@
-const Payment = require("../models/payment")
+ 
 require("dotenv").config() 
 const { Cashfree, CFEnvironment } = require("cashfree-pg");
 
@@ -12,11 +12,11 @@ const cashfree = new Cashfree(
 )
 
 const createOrder = async(
-    orderId,
+   { orderId,
     orderAmount,
     orderCurrency = "INR",
     customerId ,
-    customerPhone
+    customerPhone}
     )=>{
 
    try
@@ -50,15 +50,15 @@ const createOrder = async(
 }
     catch(error){
         console.log("Error creating order:", error.message)
-
+throw err;
     }
 };
 
 
-    const fetchPaymentStatus = async (orderId) => {
+    const fetchPaymentStatus = async ({orderId}) => {
 
     try {
-            console.log(orderId, "ORDER ID IS THIS")
+            
 
             const response = await cashfree.PGOrderFetchPayments(orderId);
           
@@ -69,9 +69,9 @@ const createOrder = async(
             let getOrderResponse = response.data
             let orderStatus ;
 
-            if (getOrderResponse.filter(transaction => transaction.payment_status === "SUCCESS").length > 0) {
+            if (getOrderResponse.some(transaction => transaction.payment_status === "SUCCESS")) {
                 orderStatus = "Success"
-        } else if (getOrderResponse.filter(transaction => transaction.payment_status === "PENDING").length > 0) {
+        } else if (getOrderResponse.some(transaction => transaction.payment_status === "PENDING")) {
                 orderStatus = "Pending"
         } else {
                 orderStatus = "Failure"

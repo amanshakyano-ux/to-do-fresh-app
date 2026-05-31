@@ -1,4 +1,9 @@
 const token = localStorage.getItem("token");
+ 
+ if(!token)
+ {
+    window.location.href = "/login.html"
+ }
 const API_URL = "http://localhost:3000/time/transactions";
 
 const dailyBtn = document.getElementById("daily");

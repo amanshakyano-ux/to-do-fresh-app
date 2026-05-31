@@ -1,95 +1,86 @@
+const { createOrder, fetchPaymentStatus } = require("../services/cashFreeService");
+const Payment = require("../models/payment");
+const User = require("../models/user");
 
-const {createOrder,fetchPaymentStatus}= require("../services/cashFreeService")
-const Payment = require("../models/payment")
-const User = require("../models/user")
-
-const processPayment= async(req,res)=>{
-
- 
-const UserId= req.user.id;
+const processPayment = async (req, res) => {
+  try {
+    const userId = req.user._id;
 
     const orderId = "ORDER-" + Date.now();
     const orderAmount = 2000;
     const orderCurrency = "INR";
-    const  customerId = "1";
+    const customerId = userId.toString();
     const customerPhone = "9999999999";
 
-    try{
-
-        const paymentSessionId = await createOrder( 
-           orderId,
-           orderAmount,
-           orderCurrency,
-           customerId,
-           customerPhone
-          )
-          console.log("FROM CREATE ORDER:", paymentSessionId); /// debugging
-          await Payment.create({
-              orderId,
-              paymentSessionId,
-              orderAmount,
-              orderCurrency,
-              paymentStatus: "Pending",
-              UserId
-          });
-           
-         res.status(201).json({paymentSessionId})
-    }catch(err){
-        console.log("ERROR IN CREATING ORDER")
-        console.log(err.message)
-    }
-}
-
-const getPaymentStatus = async(req,res)=>{
-     
-    console.log("ZZZZZZZZZZZZZZZZ")
-    const { orderId } = req.params;
-    
-    
-   
-   
-   
-   
-   const order = await Payment.findOne({
-       where: { orderId }
+    const paymentSessionId = await createOrder({
+      orderId,
+      orderAmount,
+      orderCurrency,
+      customerId,
+      customerPhone,
     });
+
+    await Payment.create({
+      orderId,
+      paymentSessionId,
+      orderAmount,
+      orderCurrency,
+      paymentStatus: "Pending",
+      userId,
+    });
+
+    return res.status(201).json({ paymentSessionId, orderId });
+  } catch (err) {
+    console.log("ERROR IN CREATING ORDER", err.message);
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const getPaymentStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Payment.findOne({ orderId });
+
     if (!order) {
-return res.status(404).send("Payment record not found");
-}
-    const status = await fetchPaymentStatus(orderId);
+      return res.status(404).send("Payment record not found");
+    }
+
+    const status = await fetchPaymentStatus({ orderId });
+
     order.paymentStatus = status;
     await order.save();
-    const userId = order.UserId;
-    const user = await User.findByPk(userId)
 
-    
+    const user = await User.findById(order.userId);
+
     if (!user) {
-        return res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     }
 
-      
-        
+    if (status === "Success") {
+      user.isPremium = true;
+      await user.save();
 
-  if (status === "Success") {
-     
-    user.isPremium = true;
-    await user.save();
-    //  return res.redirect("/success");  
-    res.status(200).json({
-        message:"congrats",
-        success:true
-    }) 
- 
+      return res.redirect("/success");
+    }
 
-  } else if(status === "Pending"){
-    res.send("Complete your payment!!");
-  }else{
-    res.send("Failed")
+    if (status === "Pending") {
+      return res.send("Complete your payment!!");
+    }
+
+    return res.send("Failed");
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
-
-     
-}
+};
 
 module.exports = {
-    getPaymentStatus,processPayment
-}
+  getPaymentStatus,
+  processPayment,
+};

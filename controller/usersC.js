@@ -16,26 +16,25 @@ const addUser = async(req,res)=>{
 
     try{
         const {name,email,password} = req.body;
-
+console.log(`Add user called ${name,email,password}`)
         if(isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(password)) {
           return  res.status(404).json({success:false,message:"All fields are mendatory"})
         }
 
-        let user = await User.findOne({
-            where: {email}
+        let user = await User.findOne({email
         })
         if(user){
           return  res.status(400).json({success:false,message:"User Already Exists With this Email Id>>"})
         }
         let saltRound = 10;
 
-         bcrypt.hash(password, saltRound,  async(err,hash)=>{
-          User.create({
+       const hashedPassword = await  bcrypt.hash(password, saltRound)
+          await User.create({
                name:name,
                email:email,
-               password:hash
+               password:hashedPassword
            })
-         })     
+          
         
        
             res.status(201).json({success:true,
@@ -52,11 +51,14 @@ const loginUser = async (req,res)=>{
     const {email,password} = req.body;
 
     if(isStringInvalid(email) || isStringInvalid(password)) {
-            res.status(404).json({success:false,message:"All fields are mendatory"})
+           return res.status(400).json({
+    success: false,
+    message: "All fields are mandatory"
+  });
      }
 
      try{
-        const user = await User.findOne({where:{email}})
+        const user = await User.findOne({email})
 
         if(user)
         {
@@ -67,7 +69,7 @@ const loginUser = async (req,res)=>{
                 }
                 if(result ===  true){
                     console.log("HEROOROROROROOR")
-                    res.status(200).json({success:true,message:"User logged in successfully", token :generateAccessToken(user.id,user.name)})
+                    res.status(200).json({success:true,message:"User logged in successfully", token :generateAccessToken(user._id,user.name)})
                 }   
                  else
                 {

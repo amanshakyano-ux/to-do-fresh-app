@@ -1,110 +1,103 @@
-const { User, Expense } = require("../models");
-const sequelize = require("../utils/db-connection");
+const User = require("../models/user");
+const Expense = require("../models/expense");
+
 function isStringInvalid(str) {
-  return !str || str.trim().length === 0;
+  return !str || String(str).trim().length === 0;
 }
+
 const addExpense = async (req, res) => {
   try {
-
-    const t = await sequelize.transaction();
-
     const { amount, description, category } = req.body;
-
-    const user_id = req.user.id;
-
-    
+    const userId = req.user._id;
 
     if (
       isStringInvalid(amount) ||
       isStringInvalid(description) ||
       isStringInvalid(category)
     ) {
-      await t.rollback();
-      return res.status(404).json({ success: false, message: "fields are mandatory" });
+      return res.status(400).json({
+        success: false,
+        message: "Fields are mandatory",
+      });
     }
-    const user = await User.findOne({
-      where: { id: user_id },
-    });
-    
-
-    const newTotalExpense = user.totalExpense + Number(amount);
-    
-    user.totalExpense = newTotalExpense; // update value
-    await user.save({ transaction: t }); // save instance
 
     const expense = await Expense.create({
-      amount: amount,
-      description: description,
-      category: category,
-      UserId: user_id,
-       
-    },
-    { transaction: t });
-    await t.commit();
-    res.status(201).json(expense);
+      amount: Number(amount),
+      description,
+      category,
+      userId,
+    });
 
+    await User.findByIdAndUpdate(userId, {
+      $inc: { totalExpense: Number(amount) },
+    });
+
+    return res.status(201).json({
+      success: true,
+      expense,
+    });
   } catch (error) {
-    await t.rollback();
-    res.status(500).json({ message: "EXPENSE ADD ERROR >>" + error.message });
+    return res.status(500).json({
+      success: false,
+      message: "EXPENSE ADD ERROR >> " + error.message,
+    });
   }
 };
 
- 
- 
-  
- 
-const getAllExpense = async (req, res) => { 
+const getAllExpense = async (req, res) => {
+  try {
+    const expenses = await Expense.find({
+      userId: req.user._id,
+    }).sort({ createdAt: -1 });
 
-  const user_id = req.user.id;
- 
-  const expenses = await Expense.findAll({
-    where: {
-      UserId: req.user.id,
-    },
-  });
-
-  if (expenses.length === 0) {
-    return res
-      .status(404)
-      .json({ success: false, message: "no Expenses  exists" });
+    return res.status(200).json({
+      success: true,
+      expenses,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "GET EXPENSE ERROR >> " + err.message,
+    });
   }
-
-  res.status(200).json(expenses);
 };
 
 const deleteExp = async (req, res) => {
-    const transaction =  await sequelize.transaction();
   try {
-
     const { id } = req.params;
-    const user_id = req.user.id;
+    const userId = req.user._id;
 
-    const expense = await Expense.findOne({ 
-        where: { id: id, UserId: user_id },
-        transaction 
+    const expense = await Expense.findOne({
+      _id: id,
+      userId,
     });
-      if (!expense) {
-      await transaction.rollback();
-      return res.status(404).json({ message: "Item not found" });
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: "Expense not found",
+      });
     }
 
-    const user = await User.findByPk(user_id, { transaction });
-     
-    const newExpense = user.totalExpense - expense.amount;
-    user.totalExpense = newExpense;
-    await user.save({transaction});
-
-    await Expense.destroy({
-      where: { id, UserId: user_id },
-      transaction
+    await Expense.deleteOne({
+      _id: id,
+      userId,
     });
-   
-    await transaction.commit();
-    res.status(200).json({ success: true, message: "expense is deleted!!" });
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { totalExpense: -Number(expense.amount) },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Expense deleted!!",
+    });
   } catch (err) {
-    await transaction.rollback();
-    res.status(500).json({ message: `ERROR FROM DELETE SEC ${err.message}` });
+    return res.status(500).json({
+      success: false,
+      message: `ERROR FROM DELETE SEC ${err.message}`,
+    });
   }
 };
 
-module.exports = { addExpense, getAllExpense, deleteExp }
+module.exports = { addExpense, getAllExpense, deleteExp };

@@ -1,132 +1,113 @@
- 
- 
-require("dotenv").config()
-const AWS = require('aws-sdk');
-const FileURL = require("../models/fileUrl")
+require("dotenv").config();
+
+const AWS = require("aws-sdk");
+const FileURL = require("../models/fileUrl");
+const User = require("../models/user");
+const Expense = require("../models/expense");
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.IAM_USER_KEY,
   secretAccessKey: process.env.IAM_USER_SECRET,
-  region: "ap-south-1"
+  region: "ap-south-1",
 });
- 
-
- 
-const { Sequelize, where } = require("sequelize");
-const { User, Expense } = require("../models");
-const { Op, sum } = require("sequelize");
-
- 
 
 const getDownloadedFiles = async (req, res) => {
   try {
-    const user_id = req.user.id;
+    const userId = req.user._id;
 
-    const files = await FileURL.findAll({
-      where: { UserId: user_id },
-      order: [["createdAt", "DESC"]]
-    });
+    const files = await FileURL.find({ userId }).sort({ createdAt: -1 });
 
-    res.status(200).json({ files });
-
+    return res.status(200).json({ success: true, files });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 };
 
-                               
+const downloadAllExp = async (req, res) => {
+  try {
+    const userId = req.user._id;
 
-const downloadAllExp = async(req,res)=>{
-  try{
-        const user_id = req.user.id;
-        const expenses = await Expense.findAll({
-      where:{
-        UserId:user_id
-      },
-      attributes:["amount","description"],
-      order:[["amount","DESC"]]
-    })
+    const expenses = await Expense.find({ userId })
+      .select("amount description")
+      .sort({ amount: -1 });
+
     let csv = "Description,Amount\n";
 
-    expenses.forEach(e=>{
-      csv += `${e.description}, ${e.amount}\n`
-    })
-   
-
-    const filename = `expense_${req.user.id}_${new Date().toISOString()}.csv`
-
-    const response = await s3.upload({
-      Bucket:process.env.BUCKET_NAME,
-      Key:filename,
-      Body:csv,
-      ContentType:"text/csv"
-    }).promise();
-    const fileURL = response.Location
-
-          await FileURL.create({
-        fileUrl: fileURL,
-        UserId: user_id
-      });
-
-        res.status(200).json({
-        success: true,
-        fileURL
-        });
-
-  }catch(err){
-  console.log("ERROR 🔴:", err);   // 👈 FULL error print hoga
-  res.status(500).json({success:false, message:err.message})
-}
-}
-
- 
-const isPremium = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.user.id);
-
-    res.status(200).json({
-      isPremium: user.isPremium   // ✅ correct column
+    expenses.forEach((e) => {
+      csv += `${e.description},${e.amount}\n`;
     });
 
+    const filename = `expense_${userId}_${new Date().toISOString()}.csv`;
+
+    const response = await s3
+      .upload({
+        Bucket: process.env.BUCKET_NAME,
+        Key: filename,
+        Body: csv,
+        ContentType: "text/csv",
+      })
+      .promise();
+
+    const fileURL = response.Location;
+
+    await FileURL.create({
+      fileUrl: fileURL,
+      userId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      fileURL,
+    });
+  } catch (err) {
+    console.log("ERROR 🔴:", err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const isPremium = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      isPremium: user.isPremium,
+    });
   } catch (err) {
     console.log("IS PREMIUM ERROR 🔴:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 };
 
 const getAllUsers = async (req, res) => {
   try {
-    const userId = req.user.id;
-     
-    const users = await User.findAll({
-      attributes: [
-        "id",
-        "name",
-        "totalExpense",
-         
-      ],
- 
-      order: [["totalExpense", "DESC"]],
+    const users = await User.find()
+      .select("name totalExpense")
+      .sort({ totalExpense: -1 });
+
+    return res.status(200).json({
+      success: true,
+      users,
     });
-     
-    res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
- const expenseReport = async (req, res) => {
+const expenseReport = async (req, res) => {
   try {
-    const user_id = req.user.id;
+    const userId = req.user._id;
     const { period } = req.query;
 
     const page = parseInt(req.query.page) || 1;
-     const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     let startDate, endDate;
-
-    /* ----------- DATE RANGE LOGIC ----------- */
 
     if (period === "daily") {
       startDate = new Date();
@@ -134,10 +115,7 @@ const getAllUsers = async (req, res) => {
 
       endDate = new Date();
       endDate.setHours(23, 59, 59, 999);
-    }
-
-    else if (period === "weekly") {
-
+    } else if (period === "weekly") {
       const now = new Date();
       const day = now.getDay();
       const adjustedDay = day === 0 ? 7 : day;
@@ -150,10 +128,7 @@ const getAllUsers = async (req, res) => {
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 6);
       endDate.setHours(23, 59, 59, 999);
-    }
-
-    else if (period === "monthly") {
-
+    } else if (period === "monthly") {
       const now = new Date();
 
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -161,62 +136,61 @@ const getAllUsers = async (req, res) => {
 
       endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       endDate.setHours(23, 59, 59, 999);
-    }
-
-    else {
+    } else {
       return res.status(400).json({
         success: false,
-        message: "Invalid period"
+        message: "Invalid period",
       });
     }
 
-    /* ----------- COMMON QUERY ----------- */
-
-    const { count, rows } = await Expense.findAndCountAll({
-      where: {
-        UserId: user_id,
-        createdAt: {
-          [Op.between]: [startDate, endDate]
-        }
+    const filter = {
+      userId,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
       },
-      order: [["createdAt", "DESC"]],
-      limit,
-      offset
-    });
+    };
 
-    const totalExp = await Expense.sum("amount", {
-      where: {
-        UserId: user_id,
-        createdAt: {
-          [Op.between]: [startDate, endDate]
-        }
-      }
-    });
+    const totalItems = await Expense.countDocuments(filter);
 
-    const totalPages = Math.ceil(count / limit);
+    const expenses = await Expense.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalResult = await Expense.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: null,
+          totalExp: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const totalExp = totalResult.length > 0 ? totalResult[0].totalExp : 0;
+    const totalPages = Math.ceil(totalItems / limit);
 
     return res.json({
-      totalItems: count,
+      success: true,
+      totalItems,
       totalPages,
       currentPage: page,
-      data: rows,
-      totalExp: totalExp || 0
+      data: expenses,
+      totalExp,
     });
-
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: err.message
+      message: err.message,
     });
   }
 };
 
-
- module.exports = {
+module.exports = {
   getAllUsers,
   isPremium,
   expenseReport,
   downloadAllExp,
-  getDownloadedFiles
+  getDownloadedFiles,
 };
- 

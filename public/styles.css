@@ -1,0 +1,123 @@
+/* Basic site-wide styles for the To-Do / Expense app */
+:root{
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --accent: #ff8a00;
+  --accent-dark: #e67e00;
+  --muted: #6b7280;
+  --success: #10b981;
+  --danger: #ef4444;
+  --border: #e5e7eb;
+  --shadow: 0 4px 12px rgba(16,24,40,0.06);
+  --shadow-lg: 0 10px 30px rgba(16,24,40,0.12);
+  --radius: 8px;
+}
+*{box-sizing: border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#111827;background:var(--bg)}
+main, .container{max-width:1000px;margin:0 auto;padding:20px}
+h1,h2,h3{color:#111827;margin:16px 0 12px 0;font-weight:600}
+
+/* Forms */
+form{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+label{width:100%;font-size:0.9rem;color:var(--muted)}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select{padding:10px;border:1px solid #e6e9ef;border-radius:6px;width:100%;max-width:320px}
+button{background:var(--accent);color:white;padding:8px 14px;border:none;border-radius:6px;cursor:pointer;transition:all .12s ease;border:1px solid rgba(0,0,0,0.04)}
+button[disabled]{opacity:0.6;cursor:not-allowed}
+
+/* Make clickable elements clearly visible and keyboard accessible */
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline: 3px solid rgba(255,138,0,0.18);
+  outline-offset: 3px;
+}
+
+button:hover{filter:brightness(.98);transform:translateY(-1px)}
+button:active{transform:translateY(0);filter:brightness(.95)}
+
+/* Links */
+a{color:var(--accent);text-decoration:none;cursor:pointer}
+a:hover{text-decoration:underline}
+
+/* Distinguish non-interactive text (paragraphs) from clickable elements */
+p{color:var(--muted);margin:8px 0}
+
+/* Utility class for anything that should look clickable */
+.clickable{cursor:pointer;color:var(--accent);text-decoration:underline}
+.clickable:hover{text-decoration:none}
+
+/* Ensure small inline buttons and action links look clickable */
+.expense-item button{background:#fff;border:1px solid #e6e9ef;color:#111;padding:6px 10px;border-radius:6px}
+.expense-item button:hover{background:#fffbf0;color:var(--accent)}
+
+/* Page header */
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+
+/* Expense list */
+#expense-list, #history, #timely-exp, #leaderboard{list-style:none;padding:0;margin:12px 0}
+.expense-item{background:var(--card);padding:12px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow)}
+.expense-meta{color:var(--muted);font-size:0.9rem}
+
+/* Leaderboard and report */
+#leaderboard li{padding:8px;background:linear-gradient(0deg,#fff,#fff);border-radius:6px;margin-bottom:6px}
+/* hide leaderboard by default; it will be shown when user clicks the button */
+#leaderboard{display:none;margin-top:8px;padding-left:0}
+#leader-heading{display:none;margin:8px 0}
+
+/* Small utilities */
+.muted{color:var(--muted)}
+.text-success{color:var(--success)}
+.text-danger{color:var(--danger)}
+.center{display:flex;justify-content:center;align-items:center}
+
+/* Responsive */
+@media (min-width:720px){
+  form label{width:auto}
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"], select{max-width:220px}
+}
+
+/* Simple link style */
+a{color:var(--accent);text-decoration:none}
+
+/* Page specific small helpers */
+#greetings{margin-bottom:12px;font-weight:600}
+#buy-premium{background:transparent;border:2px dashed var(--accent);color:var(--accent);padding:8px 12px;border-radius:6px}
+
+/* Readonly / uneditable input visual */
+input[readonly], .readonly-input{
+  background:#f3f4f6;
+  cursor:not-allowed;
+  color:var(--muted);
+  user-select:none;
+  outline: none;
+}
+input[readonly]:focus{box-shadow:none}
+
+/* Visual for fallback editable input when AI fails */
+.editable-fallback{
+  background: #fffbe6;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
+
+
+
+/* Modal-like report section */
+#report-sec{margin-top:16px}
+
+/* Styled report link/button */
+.report-link{
+  display:inline-block;
+  background: linear-gradient(90deg, #ffb347 0%, #ff7e5f 100%);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(255,126,95,0.16);
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+.report-link:hover{transform: translateY(-3px);box-shadow:0 10px 24px rgba(255,126,95,0.18)}
+.report-link:active{transform: translateY(-1px)}
+.report-caption{display:block;margin-top:8px;color:var(--muted);font-size:0.9rem}
+
+/* Footer spacing */
+footer{padding:30px 0;text-align:center;color:var(--muted)}

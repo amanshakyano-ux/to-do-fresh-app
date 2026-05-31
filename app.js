@@ -1,6 +1,8 @@
 // checking jackinssss here
 
 require("dotenv").config();
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const express = require("express");
 const fs = require("fs");
@@ -9,7 +11,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const compression = require("compression");
 
-require("./models"); // keep if needed for Sequelize models
+// require("./models"); // keep if needed for Sequelize models
 
 const db = require("./utils/db-connection");
 
@@ -20,7 +22,7 @@ const passRoutes = require("./routes/passForgetR");
 const transactionRoutes = require("./routes/transactionPeriod");
 
 const paymentRoutes = require("./routes/paymentRoutes"); // correct path check
-// Create log file safely
+// // Create log file safely
 const logPath = path.join(__dirname, "access.log");
 const accessLogStream = fs.createWriteStream(logPath, { flags: "a" });
 
@@ -32,16 +34,16 @@ app.use(express.static("views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
-app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("tiny", { stream: accessLogStream }));
 app.use(compression());
 
 // Routes
 
-app.use("/payment", paymentRoutes);
+ app.use("/payment", paymentRoutes);
 app.use("/user", userRoutes);
-app.use("/expense", expenseRoutes);
-app.use("/premium", vipUser);
-app.use("/time", transactionRoutes);
+ app.use("/expense", expenseRoutes);
+ app.use("/premium", vipUser);
+ app.use("/time", transactionRoutes);
 app.use("/password", passRoutes);
 
 // HTML routes
@@ -75,7 +77,7 @@ app.get("/success",(req,res)=>{
 const PORT = process.env.PORT || 3000;
 
 // DB + Server start
-db.sync({ alter: true })
+db()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`✅ SERVER IS RUNNING ON PORT ${PORT}`);
@@ -83,4 +85,5 @@ db.sync({ alter: true })
   })
   .catch((err) => {
     console.log(`❌ SERVER ERROR >> ${err.message}`);
+    throw err;
   });

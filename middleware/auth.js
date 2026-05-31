@@ -1,28 +1,44 @@
+require("dotenv").config();
 
- require("dotenv").config()
- const jwt = require("jsonwebtoken")
- const User = require("../models/user")
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-const authenticate = async(req,res,next)=>{
-    try{
-         
-        
-        const token = req.headers['authorization']
-        
-        const user = jwt.verify(token,process.env.JWT_SECRETKEY)
-     
-        User.findByPk(user.userId)
-            .then(user=>{
-               
-                req.user =  user;
-                 
-                next();
-            })
-        
-    }catch(err){
-        console.log("THIS IS THE MIDDLEWARE ERROR")
-        return res.status(401).json({success:false,message:err.message})
+const authenticate = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Token missing",
+      });
     }
 
-}
-module.exports = {authenticate}
+    const decodedToken = jwt.verify(
+      token,
+      process.env.JWT_SECRETKEY
+    );
+
+    const user = await User.findById(decodedToken.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    req.user = user;
+
+    next();
+  } catch (err) {
+    console.log("THIS IS THE MIDDLEWARE ERROR");
+
+    return res.status(401).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+module.exports = { authenticate };

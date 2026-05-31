@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TO Do </title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body style="margin: 50px;  ">
- 
 
+    <div> <button id="logout">Logout</button></div>
+ 
+<div id="greetings"></div>
         <button  style="display: flex; justify-content: center; color: orange;" id="buy-premium">Click For Premium experience</button>
         <br><br>
+
+        
 
      <form onsubmit=handleExpense(event)>
         <label for="amount">Spent Amount:</label>
@@ -17,7 +22,7 @@
         <label for="desc">Description</label>
         <input type="text" name="description" placeholder="explain here"  id= "desc" required> 
     <label for="category">Category</label>
-   <input type="text" name="category" id="category" placeholder="AI generated">
+    <input type="text" name="category" id="category" placeholder="AI generated" readonly class="readonly-input">
          
         
         <button type="submit">ADD</button>
@@ -29,6 +34,8 @@
 
    <p id="premium-user"></p>
 
+   <h2 id="leader-heading"></h3>
+   <ul id="leaderboard"></ul>
   <h2 id="expense-heading"> Expenses</h2> 
   
   <h3 id="prem-down"></h3>
@@ -37,8 +44,6 @@
   </div>
 
    <div id="expense-list"></div>
-   <h2 id="leader-heading"></h3>
-   <ul id="leaderboard"></ul>
 
     <div id="report-sec"></div>
     

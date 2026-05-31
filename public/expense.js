@@ -1,5 +1,14 @@
-const token = localStorage.getItem("token");
-console.log("TOKEN:", token);
+function getToken() {
+  return localStorage.getItem("token");
+}
+ if(!getToken())
+ {
+    window.location.href = "/login.html"
+ }
+  document.getElementById("logout").addEventListener("click",()=>{
+    localStorage.clear();
+        window.location.href="/login.html" 
+  })
 const API_URL = "/expense";
 const expenseList = document.getElementById("expense-list");
 const cashfree = Cashfree({
@@ -27,11 +36,11 @@ function buy_premium_pack() {
 // ✅ CORRECT FUNCTION (single definition)
 async function buyingPaidfeature() {
     try {
-       console.log("TOKEN", token)
+       
         const res = await axios.post(
             "/payment/create-order",
             {},
-            { headers: { Authorization: token } }
+            { headers: { Authorization: getToken() } }
         );
         console.log(res.data.paymentSessionId, "SESSION ID IS THIS")
        const paymentSessionId = res.data.paymentSessionId;
@@ -48,11 +57,7 @@ async function buyingPaidfeature() {
     
     //ab yhaan checkout process start hogii session dekr
       const output =  await cashfree.checkout(checkoutOptions);
-      console.log(output, "Output")
-        
-
-         
-
+       
     } catch (err) {
          
       console.log("Payment Error FULL:", err.response?.data || err.message);
@@ -94,13 +99,22 @@ function categoryGenerator() {
                 const response = await axios.post(
                     `${API_URL}/predictCategory`,
                     { description },
-                    { headers: { Authorization: token } }
+                    { headers: { Authorization: getToken() } }
                 );
 
                 categoryInput.value = response.data;
 
             } catch (err) {
                 console.log("AI Error:", err);
+                // If AI fails, allow user to enter category manually as a fallback
+                try {
+                    categoryInput.readOnly = false;
+                    categoryInput.classList.remove("readonly-input");
+                    categoryInput.classList.add("editable-fallback");
+                    categoryInput.placeholder = "AI unavailable — enter category";
+                } catch (e) {
+                    // ignore if elements not available
+                }
             }
         }, 400);
     });
@@ -112,24 +126,43 @@ categoryGenerator();
 // ---------------- ADD EXPENSE ----- 
 async function handleExpense(e) {
     e.preventDefault();
+    const amount = (e.target.amount.value || "").toString().trim();
+    const description = (e.target.description.value || "").toString().trim();
+    const category = (e.target.category.value || "").toString().trim();
 
-    const expense_item = {
-        amount: e.target.amount.value,
-        description: e.target.description.value,
-        category: e.target.category.value
-    };
+    if (!amount || !description || !category) {
+        alert("All fields are mandatory");
+        return;
+    }
+
+    const expense_item = { amount, description, category };
 
     try {
         await axios.post(`${API_URL}/addExpense`, expense_item, {
-            headers: { Authorization: token }
+            headers: { Authorization: getToken() }
         });
 
         const expenses = await axios.get(`${API_URL}/getExpenses`, {
-            headers: { Authorization: token }
+            headers: { Authorization: getToken() }
         });
 
         e.target.reset();
-        showExpense(expenses.data);
+
+if (isLeaderBoardOpen) {
+    const heading = document.getElementById("leader-heading");
+
+    allUsers.innerHTML = "";
+
+    if (heading) {
+        heading.textContent = "";
+        heading.style.display = "none";
+    }
+
+    allUsers.style.display = "none";
+    isLeaderBoardOpen = false;
+}
+        
+        showExpense(expenses.data.expenses);
 
     } catch (err) {
         console.log(err.message);
@@ -144,7 +177,7 @@ function showExpense(expenses) {
 
     expenses.forEach(exp => {
         const li = document.createElement("li");
-        li.id = `expense-${exp.id}`;
+        li.id = `expense-${exp._id}`;
 
         li.innerHTML = `
             <strong>Amount:</strong> ${exp.amount}
@@ -156,7 +189,7 @@ function showExpense(expenses) {
         delBtn.textContent = "DELETE EXPENSE";
         delBtn.style.margin = "10px";
 
-        delBtn.onclick = () => deleteExp(exp.id);
+        delBtn.onclick = () => deleteExp(exp._id);
 
         li.appendChild(delBtn);
         expenseList.appendChild(li);
@@ -168,7 +201,7 @@ function showExpense(expenses) {
 async function deleteExp(id) {
     try {
         await axios.delete(`${API_URL}/deleteExpense/${id}`, {
-            headers: { Authorization: token }
+            headers: { Authorization: getToken() }
         });
 
         const el = document.getElementById(`expense-${id}`);
@@ -184,7 +217,7 @@ async function deleteExp(id) {
 async function showDownloadHistory() {
     try {
         const res = await axios.get(`${API_URL}/files`, {
-            headers: { Authorization: token }
+            headers: { Authorization: getToken() }
         });
 
         const container = document.getElementById("history");
@@ -213,7 +246,7 @@ async function isPremium() {
     try {
 
         const res = await axios.get(`${API_URL}/isPremium`, {
-            headers: { Authorization: token }
+            headers: { Authorization: getToken() }
         });
           const buyBtn = document.getElementById("buy-premium");
 
@@ -228,23 +261,33 @@ async function isPremium() {
         console.log("isPremium error:", err.message);
     }
 }
-
+const div = document.getElementById("greetings")
 
 // ---------------- PREMIUM UI HANDLER ----------------
 function showPremiumUI() {
-    console.log("HERORROOROROROROROROR")
+    greetingMsg();
     showLeaderBoardBtn();
     showReportBtn();
     downloadAllExp();
     showDownloadHistory();
 }
-
+function greetingMsg(){
+    const para = document.createElement("h2")
+    para.textContent = "Now you are  a PRO user!!"
+    para.style.color = "brown"
+     
+    para.style.marginLeft = "500px"
+     
+    div.appendChild(para)
+     
+}
 
 // ---------------- DOWNLOAD ALL EXPENSE ----------------
-async function downloadAllExp() {
+async function 
+downloadAllExp() {
     try {
         const premTag = document.getElementById("prem-down");
-        premTag.textContent = "Premium";
+        
         premTag.style.color = "green";
 
         if (document.getElementById("download-btn")) return;
@@ -255,9 +298,9 @@ async function downloadAllExp() {
         btn.id = "download-btn";
 
         btn.onclick = async () => {
-            const response = await axios.get(
+                const response = await axios.get(
                 `${API_URL}/download-expenses`,
-                { headers: { Authorization: token } }
+                { headers: { Authorization: getToken() } }
             );
 
             const a = document.createElement("a");
@@ -286,18 +329,22 @@ async function showLeaderBoard() {
 
         const response = await axios.get(
             "/premium",
-            { headers: { Authorization: token } }
+            { headers: { Authorization: getToken() } }
         );
 
         const heading = document.getElementById("leader-heading");
         heading.textContent = "Leaderboard";
         heading.style.color = "brown";
 
-        response.data.forEach(user => {
+        response.data.users.forEach(user => {
             const li = document.createElement("li");
             li.textContent = `Name - ${user.name} || Total Expense - ${user.totalExpense}`;
             allUsers.appendChild(li);
         });
+
+        // show heading and list
+        if (heading) heading.style.display = "block";
+        if (allUsers) allUsers.style.display = "block";
 
     } catch (err) {
         console.log(err.message);
@@ -306,46 +353,72 @@ async function showLeaderBoard() {
 
 
 // ---------------- PREMIUM BUTTONS ----------------
+let isLeaderBoardOpen = false;
 function showLeaderBoardBtn() {
     const premiumUser = document.getElementById("premium-user");
-
     const wrapper = document.createElement("div");
     wrapper.style = "color: green; font-weight: bold; padding: 10px;";
-    wrapper.textContent = "Premium ";
+    // wrapper.textContent = "Premium ";
 
     const btn = document.createElement("button");
     btn.textContent = "LEADERBOARD";
     btn.style.margin = "10px";
-    btn.onclick = showLeaderBoard;
+   
+
+btn.onclick = async () => {
+        const heading = document.getElementById("leader-heading");
+
+        if (isLeaderBoardOpen) {
+            allUsers.innerHTML = "";
+            if (heading) heading.textContent = "";
+            if (heading) heading.style.display = "none";
+            if (allUsers) allUsers.style.display = "none";
+            isLeaderBoardOpen = false;
+        } else {
+            await showLeaderBoard();
+            isLeaderBoardOpen = true;
+        }
+    };
+
 
     wrapper.appendChild(btn);
     premiumUser.appendChild(wrapper);
 }
 
+
+
 function showReportBtn() {
     const reportDiv = document.getElementById("report-sec");
 
     const tag = document.createElement("h3");
-    tag.innerText = "Premium";
+    // tag.innerText = "Premium";
     tag.style = "color: green; font-weight: bold; padding: 10px;";
 
     const link = document.createElement("a");
     link.href = "expenseReport.html";
     link.textContent = "Click to get the full expense report";
-    link.style = "color: black; font-size: 15px; font-weight: bold; padding: 10px;";
+    link.className = "report-link";
+
+    const caption = document.createElement("span");
+    caption.className = "report-caption";
+    caption.textContent = "View/download your expense report with filters & pagination";
 
     tag.appendChild(link);
+    tag.appendChild(caption);
     reportDiv.appendChild(tag);
 }
 
 
 // ---------------- INIT ----------------
 window.addEventListener("DOMContentLoaded", async () => {
+    // refresh token on load in case it changed
+   
+
     await isPremium();
 
     const expenses = await axios.get(`${API_URL}/getExpenses`, {
-        headers: { Authorization: token }
+        headers: { Authorization:  getToken() }
     });
-     
-    showExpense(expenses.data);
+
+    showExpense(expenses.data.expenses);
 });

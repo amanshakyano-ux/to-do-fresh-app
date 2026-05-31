@@ -9,8 +9,9 @@ async function signup(e){
         password:e.target.password.value
     }
     try{
-
+        
         const user = await axios.post(API_URL,userDetails)
+         
         
         window.location.href = "/login.html"
     }catch(err)
