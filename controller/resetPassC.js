@@ -9,7 +9,7 @@ const client = Sib.ApiClient.instance;
 const apiKey = client.authentications["api-key"];
 apiKey.apiKey = process.env.SIB_API_KEY;
 
-const updatePassword = async (req, res) => {
+const updatePassword = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { newpassword } = req.body;
@@ -39,11 +39,11 @@ const updatePassword = async (req, res) => {
 
     return res.status(200).send("<h3>Password updated successfully ✅</h3>");
   } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    return next(err);
   }
 };
 
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -68,11 +68,11 @@ const resetPassword = async (req, res) => {
       </html>
     `);
   } catch (err) {
-    return res.status(500).send("<h3>Something went wrong</h3>");
+    return next(err);
   }
 };
 
-const forgotpassword = async (req, res) => {
+const forgotpassword = async (req, res, next) => {
   try {
     const { email } = req.body;
 
@@ -113,10 +113,7 @@ const forgotpassword = async (req, res) => {
     });
   } catch (err) {
     console.log("Email API Error occurs", err);
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return next(err);
   }
 };
 

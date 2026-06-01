@@ -11,7 +11,7 @@ const s3 = new AWS.S3({
   region: "ap-south-1",
 });
 
-const getDownloadedFiles = async (req, res) => {
+const getDownloadedFiles = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
@@ -19,11 +19,11 @@ const getDownloadedFiles = async (req, res) => {
 
     return res.status(200).json({ success: true, files });
   } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
+    return next(err);
   }
 };
 
-const downloadAllExp = async (req, res) => {
+const downloadAllExp = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
@@ -61,11 +61,11 @@ const downloadAllExp = async (req, res) => {
     });
   } catch (err) {
     console.log("ERROR 🔴:", err);
-    return res.status(500).json({ success: false, message: err.message });
+    return next(err);
   }
 };
 
-const isPremium = async (req, res) => {
+const isPremium = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -79,11 +79,11 @@ const isPremium = async (req, res) => {
     });
   } catch (err) {
     console.log("IS PREMIUM ERROR 🔴:", err);
-    return res.status(500).json({ success: false, error: err.message });
+    return next(err);
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
       .select("name totalExpense")
@@ -94,11 +94,11 @@ const getAllUsers = async (req, res) => {
       users,
     });
   } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    return next(err);
   }
 };
 
-const expenseReport = async (req, res) => {
+const expenseReport = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const { period } = req.query;
@@ -180,10 +180,7 @@ const expenseReport = async (req, res) => {
       totalExp,
     });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return next(err);
   }
 };
 

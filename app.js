@@ -87,3 +87,20 @@ db()
     console.log(`❌ SERVER ERROR >> ${err.message}`);
     throw err;
   });
+
+// 404 handler
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  const status = err.status || 500;
+  res.status(status).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});

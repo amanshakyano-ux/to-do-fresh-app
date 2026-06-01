@@ -5,7 +5,7 @@ function isStringInvalid(str) {
   return !str || String(str).trim().length === 0;
 }
 
-const addExpense = async (req, res) => {
+const addExpense = async (req, res, next) => {
   try {
     const { amount, description, category } = req.body;
     const userId = req.user._id;
@@ -37,14 +37,11 @@ const addExpense = async (req, res) => {
       expense,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "EXPENSE ADD ERROR >> " + error.message,
-    });
+    return next(error);
   }
 };
 
-const getAllExpense = async (req, res) => {
+const getAllExpense = async (req, res, next) => {
   try {
     const expenses = await Expense.find({
       userId: req.user._id,
@@ -55,14 +52,11 @@ const getAllExpense = async (req, res) => {
       expenses,
     });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: "GET EXPENSE ERROR >> " + err.message,
-    });
+    return next(err);
   }
 };
 
-const deleteExp = async (req, res) => {
+const deleteExp = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user._id;
@@ -93,10 +87,7 @@ const deleteExp = async (req, res) => {
       message: "Expense deleted!!",
     });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: `ERROR FROM DELETE SEC ${err.message}`,
-    });
+    return next(err);
   }
 };
 

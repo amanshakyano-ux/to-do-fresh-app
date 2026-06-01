@@ -12,7 +12,7 @@ function isStringInvalid(str) {
 }
 
 
-const addUser = async(req,res)=>{
+const addUser = async(req,res,next)=>{
 
     try{
         const {name,email,password} = req.body;
@@ -42,12 +42,12 @@ console.log(`Add user called ${name,email,password}`)
             })
 
     
-       }catch(err){
-          res.status(500).json({success:false, message:err.message})
-    }
+         }catch(err){
+          return next(err);
+      }
 }
 
-const loginUser = async (req,res)=>{
+    const loginUser = async (req,res,next)=>{
     const {email,password} = req.body;
 
     if(isStringInvalid(email) || isStringInvalid(password)) {
@@ -63,10 +63,10 @@ const loginUser = async (req,res)=>{
         if(user)
         {
              
-             bcrypt.compare(password, user.password, async(err,result)=>{
-                if(err){
-                     throw new Error("Something went wrong")
-                }
+               bcrypt.compare(password, user.password, async(err,result)=>{
+               if(err){
+                 return next(err);
+               }
                 if(result ===  true){
                     console.log("HEROOROROROROOR")
                     res.status(200).json({success:true,message:"User logged in successfully", token :generateAccessToken(user._id,user.name)})
@@ -80,9 +80,9 @@ const loginUser = async (req,res)=>{
            return res.status(404).json({success:false,message:"User does't exists!!"})
          }
 
-     }catch(err){
-        res.status(500).json({success:false, message:err.message})
-     }
+      }catch(err){
+        return next(err);
+      }
 
 }
  

@@ -33,11 +33,8 @@ const authenticate = async (req, res, next) => {
     next();
   } catch (err) {
     console.log("THIS IS THE MIDDLEWARE ERROR");
-
-    return res.status(401).json({
-      success: false,
-      message: err.message,
-    });
+    err.status = err.status || 401;
+    return next(err);
   }
 };
 

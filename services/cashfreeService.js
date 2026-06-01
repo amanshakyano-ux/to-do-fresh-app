@@ -50,10 +50,9 @@ const createOrder = async(
 }
     catch(error){
         console.log("Error creating order:", error.message)
-throw err;
+        throw error;
     }
 };
-
 
     const fetchPaymentStatus = async ({orderId}) => {
 

@@ -2,7 +2,7 @@ const { createOrder, fetchPaymentStatus } = require("../services/cashFreeService
 const Payment = require("../models/payment");
 const User = require("../models/user");
 
-const processPayment = async (req, res) => {
+const processPayment = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
@@ -32,14 +32,11 @@ const processPayment = async (req, res) => {
     return res.status(201).json({ paymentSessionId, orderId });
   } catch (err) {
     console.log("ERROR IN CREATING ORDER", err.message);
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return next(err);
   }
 };
 
-const getPaymentStatus = async (req, res) => {
+const getPaymentStatus = async (req, res, next) => {
   try {
     const { orderId } = req.params;
 
@@ -73,10 +70,7 @@ const getPaymentStatus = async (req, res) => {
 
     return res.send("Failed");
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    return next(err);
   }
 };
 
