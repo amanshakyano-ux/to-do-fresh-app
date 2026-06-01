@@ -1,4 +1,4 @@
-const { createOrder, fetchPaymentStatus } = require("../services/cashFreeService");
+const { createOrder, fetchPaymentStatus } = require("../services/cashfreeService");
 const Payment = require("../models/payment");
 const User = require("../models/user");
 
