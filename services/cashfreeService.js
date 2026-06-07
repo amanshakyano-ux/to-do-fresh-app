@@ -57,12 +57,12 @@ const createOrder = async(
    }
    return sessionId;
 }
-    catch(error){
+    catch(err){
           console.log("Cashfree Error Status:", err.response?.status);
   console.log("Cashfree Error Data:", err.response?.data);
   console.log("Cashfree Error Headers:", err.response?.headers);
-        console.log("Error creating order:", error.message)
-        throw error;
+        console.log("Error creating order:", err.message)
+        throw err;
     }
 };
 
