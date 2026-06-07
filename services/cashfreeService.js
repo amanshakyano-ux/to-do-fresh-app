@@ -1,7 +1,8 @@
  
 require("dotenv").config() 
+const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 const { Cashfree, CFEnvironment } = require("cashfree-pg");
-
+ 
 
 //settuping cashfree
 
@@ -21,6 +22,9 @@ const createOrder = async(
 
    try
     { 
+        if (!process.env.CASHFREE_APP_ID || !process.env.CASHFREE_SECRET_KEY) {
+        throw new Error("Missing Cashfree credentials");
+      }
      const expiryDate = new Date(Date.now() + 60 * 60 * 1000);  //1hr from now
      const formattedExpiryDate = expiryDate.toISOString();
 
@@ -36,7 +40,7 @@ const createOrder = async(
         },
 
         "order_meta": {
-            "return_url": `http://localhost:3000/payment/payment-status/${orderId}`,
+            "return_url": `${baseUrl}/payment/payment-status/${orderId}`,
              payment_methods:"cc,dc,upi"
         },
         order_expiry_time:formattedExpiryDate   // set the valid expiry date
@@ -46,7 +50,12 @@ const createOrder = async(
    const response = await cashfree.PGCreateOrder(request);  // main thing is this
    
    
-   return response.data.payment_session_id;
+   // Response structure: might be response.payment_session_id or response.data.payment_session_id
+   const sessionId = response.payment_session_id || (response.data && response.data.payment_session_id);
+   if (!sessionId) {
+     throw new Error("No payment_session_id in Cashfree response");
+   }
+   return sessionId;
 }
     catch(error){
         console.log("Error creating order:", error.message)
@@ -57,15 +66,9 @@ const createOrder = async(
     const fetchPaymentStatus = async ({orderId}) => {
 
     try {
-            
-
-            const response = await cashfree.PGOrderFetchPayments(orderId);
-          
-            
-
-             
-
-            let getOrderResponse = response.data
+       const response = await cashfree.PGOrderFetchPayments(orderId);
+        
+       let getOrderResponse = response.data || response;
             let orderStatus ;
 
             if (getOrderResponse.some(transaction => transaction.payment_status === "SUCCESS")) {

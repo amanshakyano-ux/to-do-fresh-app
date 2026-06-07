@@ -45,7 +45,9 @@ app.use("/user", userRoutes);
  app.use("/premium", vipUser);
  app.use("/time", transactionRoutes);
 app.use("/password", passRoutes);
-
+app.use("/",(req,res)=>{
+  res.sendFile(path.join(__dirname,"views","login.html"))
+})
 // HTML routes
 
 app.get("/signup.html", (req, res) => {

@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const ForgotPasswordRequests = require("../models/resetPass");
@@ -105,7 +105,7 @@ const forgotpassword = async (req, res, next) => {
       to: receivers,
       subject: "For password reset of expense tracker app",
       htmlContent: `<h3>Click to reset your password</h3>
-      <a href="http://localhost:3000/password/resetpassword/${request._id}">Reset Password</a>`,
+       <a href="${baseUrl}/password/resetpassword/${request._id}">Reset Password</a>`,
     });
 
     return res.status(200).json({

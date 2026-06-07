@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/user/signup"
+const API_URL = "/user/signup"
 const form = document.querySelector("form")
 const caution = document.getElementById("response-msg")
 async function signup(e){

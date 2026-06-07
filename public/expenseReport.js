@@ -4,7 +4,7 @@ const token = localStorage.getItem("token");
  {
     window.location.href = "/login.html"
  }
-const API_URL = "http://localhost:3000/time/transactions";
+const API_URL = "/time/transactions";
 
 const dailyBtn = document.getElementById("daily");
 const weeklyBtn = document.getElementById("weekly");

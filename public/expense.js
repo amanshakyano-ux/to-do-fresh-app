@@ -37,14 +37,16 @@ function buy_premium_pack() {
 async function buyingPaidfeature() {
     try {
        
+        
         const res = await axios.post(
             "/payment/create-order",
             {},
             { headers: { Authorization: getToken() } }
         );
-        console.log(res.data.paymentSessionId, "SESSION ID IS THIS")
+        
        const paymentSessionId = res.data.paymentSessionId;
-       console.log(paymentSessionId)
+       
+   
 
         let checkoutOptions = {
         paymentSessionId,

@@ -4,6 +4,7 @@ const User = require("../models/user");
 
 const processPayment = async (req, res, next) => {
   try {
+    
     const userId = req.user._id;
 
     const orderId = "ORDER-" + Date.now();

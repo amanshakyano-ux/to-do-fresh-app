@@ -1,4 +1,4 @@
- const API_URL = "http://localhost:3000/user/login"
+ const API_URL = "/user/login"
  
  
  const caution = document.getElementById("response-msg")
@@ -45,7 +45,7 @@ const responseMsg = document.getElementById("response-msg")
     e.preventDefault()
     try{
         const email = e.target.email.value;
-        const res = await axios.post("http://localhost:3000/password/forgotpassword",{email})
+        const res = await axios.post("/password/forgotpassword",{email})
         
         
         responseMsg.textContent = `${res.data.message}`
