@@ -58,6 +58,9 @@ const createOrder = async(
    return sessionId;
 }
     catch(error){
+          console.log("Cashfree Error Status:", err.response?.status);
+  console.log("Cashfree Error Data:", err.response?.data);
+  console.log("Cashfree Error Headers:", err.response?.headers);
         console.log("Error creating order:", error.message)
         throw error;
     }
