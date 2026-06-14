@@ -7,21 +7,31 @@
    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Login Here</h1>
-     <form onsubmit = handleForm(event)>
-        <label for="email" >Email</label>
-        <input type="email" name="email" id="email">
-        <label for="password" >Password</label>
-        <input type="password" name="password" id="password">
-        <button type="submit">Login</button>
-     </form>
-  <br>
-     <button id="reset-pass" type="submit">Reset Password</button>
-<p id="response-msg"></p>
+    <main class="container page">
+        <header class="page-header">
+            <div>
+                <h1>Login</h1>
+                <p class="muted">Access your account and manage expenses.</p>
+            </div>
+        </header>
 
-<a href="/signup.html">Sign Up </a>
+        <form onsubmit="handleForm(event)">
+            <div class="field-row">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="field-row">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <button id="reset-pass" type="button" class="secondary-btn">Reset Password</button>
+        </form>
 
- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
-<script src="/login.js"></script>
+        <p id="response-msg"></p>
+        <p class="muted">Don’t have an account? <a href="/signup.html">Sign Up</a></p>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+    <script src="/login.js"></script>
 </body>
 </html>

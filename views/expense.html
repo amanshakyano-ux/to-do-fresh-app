@@ -1,61 +1,57 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TO Do </title>
+    <title>TO Do</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body style="margin: 50px;  ">
+<body>
+    <main class="container page">
+        <header class="page-header">
+            <div>
+                <h1>TO Do</h1>
+                <p id="greetings" class="muted"></p>
+            </div>
+            <div class="action-group">
+                <button id="logout" class="secondary-btn" type="button">Logout</button>
+                <button id="buy-premium" class="primary-outline-btn" type="button">Click For Premium experience</button>
+            </div>
+        </header>
 
-    <div> <button id="logout">Logout</button></div>
- 
-<div id="greetings"></div>
-        <button  style="display: flex; justify-content: center; color: orange;" id="buy-premium">Click For Premium experience</button>
-        <br><br>
+        <form onsubmit="handleExpense(event)">
+            <div class="field-row">
+                <label for="amount">Spent Amount</label>
+                <input type="number" name="amount" placeholder="Enter amount" id="amount" required>
+            </div>
+            <div class="field-row">
+                <label for="desc">Description</label>
+                <input type="text" name="description" placeholder="Explain here" id="desc" required>
+            </div>
+            <div class="field-row">
+                <label for="category">Category</label>
+                <input type="text" name="category" id="category" placeholder="AI generated" readonly class="readonly-input">
+            </div>
+            <button type="submit">Add Expense</button>
+        </form>
 
-        
+        <div class="page-section">
+            <p id="premium-user"></p>
+            <h2 id="leader-heading" class="section-title">Leaderboard</h2>
+            <ul id="leaderboard"></ul>
+        </div>
 
-     <form onsubmit=handleExpense(event)>
-        <label for="amount">Spent Amount:</label>
-        <input type="number" name="amount" placeholder="spent amt"  id="amount" required>
-        <label for="desc">Description</label>
-        <input type="text" name="description" placeholder="explain here"  id= "desc" required> 
-    <label for="category">Category</label>
-    <input type="text" name="category" id="category" placeholder="AI generated" readonly class="readonly-input">
-         
-        
-        <button type="submit">ADD</button>
-   </form>
+        <section class="page-section">
+            <h2 id="expense-heading">Expenses</h2>
+            <div id="expense-list"></div>
+        </section>
 
-  
-
-   
-
-   <p id="premium-user"></p>
-
-   <h2 id="leader-heading"></h3>
-   <ul id="leaderboard"></ul>
-  <h2 id="expense-heading"> Expenses</h2> 
-  
-  <h3 id="prem-down"></h3>
-       
-
-  </div>
-
-   <div id="expense-list"></div>
-
-    <div id="report-sec"></div>
-    
- 
-     
-    
-
-<div id="history"></div>
-    </div>
+        <div id="report-sec"></div>
+        <div id="history"></div>
+    </main>
 
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
-   <script src="/expense.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+    <script src="/expense.js"></script>
 </body>
 </html>

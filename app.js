@@ -49,7 +49,14 @@ app.get("/",(req,res)=>{
   res.sendFile(path.join(__dirname,"views","login.html"))
 })
 // HTML routes
-
+app.get("/health",(req,res)=>{
+  
+  res.json({
+    success: true,
+    message: "Server is running"
+  });
+});
+ 
 app.get("/signup.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "signup.html"));
 });

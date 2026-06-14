@@ -6,27 +6,35 @@
     <title>Document</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body style="margin: 50px;"> 
-       <h2 id="page-title">Day to Day Expenses</h2>
-       <div id="report-bar" style="display: flex; gap: 5px;  ">
-        <select id="limit-select">
+<body>
+    <main class="container page">
+        <header class="page-header">
+            <div>
+                <h1>Expense Report</h1>
+                <p class="muted">Filter by interval and review totals.</p>
+            </div>
+        </header>
+
+        <div id="report-bar" class="action-group">
+            <label for="limit-select" class="small-label">Items</label>
+            <select id="limit-select">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="40">40</option>
-                </select>
-       <button id="daily" type="submit">Daily</button>
-       <button id="weekly" type="submit">Weekly</button>
-       <button id="monthly" type="submit">Monthly</button>  
-    </div>
-    <ul id="timely-exp"></ul>
-    
-    <p id="totalExp"></p>
-    <div id="pagination" style="margin-top:10px;"></div>
-    <button type="submit" id="download-list"  style="display: none;">Download</button>
-       
+            </select>
+            <button id="daily" type="button">Daily</button>
+            <button id="weekly" type="button">Weekly</button>
+            <button id="monthly" type="button">Monthly</button>
+            <button type="button" id="download-list">Download</button>
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
-<script src="/expenseReport.js"></script>
+        <ul id="timely-exp"></ul>
+        <p id="totalExp"></p>
+        <div id="pagination"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+    <script src="/expenseReport.js"></script>
 </body>
 </html>

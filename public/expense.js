@@ -265,23 +265,38 @@ async function isPremium() {
 }
 const div = document.getElementById("greetings")
 
+function getUserFromToken() {
+    const token = getToken();
+    if (!token) return null;
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    try {
+        const payload = JSON.parse(atob(parts[1]));
+        return payload;
+    } catch (err) {
+        return null;
+    }
+}
+
+function setGreeting() {
+    const user = getUserFromToken();
+    if (!div) return;
+    div.textContent = user?.name ? `Welcome back, ${user.name}!` : "Welcome back!";
+}
+
 // ---------------- PREMIUM UI HANDLER ----------------
 function showPremiumUI() {
-    greetingMsg();
+    setPremiumMessage();
     showLeaderBoardBtn();
     showReportBtn();
     downloadAllExp();
     showDownloadHistory();
 }
-function greetingMsg(){
-    const para = document.createElement("h2")
-    para.textContent = "Now you are  a PRO user!!"
-    para.style.color = "brown"
-     
-    para.style.marginLeft = "500px"
-     
-    div.appendChild(para)
-     
+function setPremiumMessage(){
+    const premiumContainer = document.getElementById("premium-user");
+    if (!premiumContainer) return;
+    premiumContainer.textContent = "You are a PRO user!";
+    premiumContainer.style.color = "brown";
 }
 
 // ---------------- DOWNLOAD ALL EXPENSE ----------------
@@ -415,6 +430,8 @@ function showReportBtn() {
 window.addEventListener("DOMContentLoaded", async () => {
     // refresh token on load in case it changed
    
+
+    setGreeting();
 
     await isPremium();
 

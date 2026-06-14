@@ -7,22 +7,34 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-   <h3 > This is a SIGNUP page</h3>
-    <form onsubmit=signup(event)>
-        <label for="name">Name:</label>
-        <input type="text" id="name"  name="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+    <main class="container page">
+        <header class="page-header">
+            <div>
+                <h1>Sign Up</h1>
+                <p class="muted">Create your account and start tracking expenses.</p>
+            </div>
+        </header>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Signup</button>
-    </form>
-    <p id="response-msg"></p>
+        <form onsubmit="signup(event)">
+            <div class="field-row">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="field-row">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="field-row">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
 
-    <a href="/login.html">Click for login </a>
-    
+        <p id="response-msg"></p>
+        <p class="muted"><a href="/login.html">Already have an account? Login</a></p>
+    </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
-  <script src="/signup.js"></script>
+    <script src="/signup.js"></script>
 </body>
 </html>
